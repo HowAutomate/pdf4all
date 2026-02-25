@@ -9,21 +9,25 @@ import { SupportedFormats } from '@/components/SupportedFormats';
 import { useConversion } from '@/hooks/useConversion';
 
 const Index = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const { status, progress, error, result, history, convertFile, reset, clearHistory } = useConversion();
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const { status, progress, error, results, history, convertFiles, reset, clearHistory, currentFileIndex, totalFiles } = useConversion();
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
+  const handleFilesSelect = (files: File[]) => {
+    setSelectedFiles((prev) => [...prev, ...files]);
+  };
+
+  const handleClearFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleConvert = () => {
-    if (selectedFile) {
-      convertFile(selectedFile);
+    if (selectedFiles.length > 0) {
+      convertFiles(selectedFiles);
     }
   };
 
   const handleReset = () => {
-    setSelectedFile(null);
+    setSelectedFiles([]);
     reset();
   };
 
@@ -31,7 +35,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -43,10 +46,8 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main content */}
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          {/* Hero section */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               Convert Any File to{' '}
@@ -55,31 +56,31 @@ const Index = () => {
               </span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Upload your documents, images, spreadsheets, and more. Get a perfectly formatted PDF in seconds.
+              Upload your documents, images, spreadsheets, and more. Get perfectly formatted PDFs in seconds.
             </p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-3">
-            {/* Main converter area */}
             <div className="lg:col-span-2">
               <div className="p-8 rounded-3xl bg-card border border-border shadow-lg">
                 {status === 'idle' && (
                   <>
                     <FileDropZone
-                      onFileSelect={handleFileSelect}
-                      selectedFile={selectedFile}
-                      onClearFile={() => setSelectedFile(null)}
+                      onFilesSelect={handleFilesSelect}
+                      selectedFiles={selectedFiles}
+                      onClearFile={handleClearFile}
+                      onClearAll={() => setSelectedFiles([])}
                       disabled={isProcessing}
                     />
 
-                    {selectedFile && (
+                    {selectedFiles.length > 0 && (
                       <div className="mt-6 animate-fade-in-up">
                         <Button
                           onClick={handleConvert}
                           size="lg"
                           className="w-full bg-gradient-to-r from-primary via-secondary to-accent hover:opacity-90 transition-opacity text-white font-semibold h-14 text-lg"
                         >
-                          Convert to PDF
+                          Convert {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} to PDF
                         </Button>
                       </div>
                     )}
@@ -87,13 +88,20 @@ const Index = () => {
                 )}
 
                 {isProcessing && (
-                  <ConversionProgress status={status} progress={progress} />
+                  <div>
+                    <ConversionProgress status={status} progress={progress} />
+                    {totalFiles > 1 && (
+                      <p className="text-center text-sm text-muted-foreground mt-3">
+                        Processing file {currentFileIndex} of {totalFiles}
+                      </p>
+                    )}
+                  </div>
                 )}
 
-                {status === 'success' && result && selectedFile && (
+                {status === 'success' && results.length > 0 && (
                   <ConversionResult
-                    result={result}
-                    originalFileName={selectedFile.name}
+                    results={results}
+                    originalFileNames={selectedFiles.map(f => f.name)}
                     onReset={handleReset}
                   />
                 )}
@@ -103,24 +111,18 @@ const Index = () => {
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
                       <AlertCircle className="w-8 h-8 text-destructive" />
                     </div>
-                    <h2 className="text-xl font-semibold text-foreground mb-2">
-                      Conversion Failed
-                    </h2>
+                    <h2 className="text-xl font-semibold text-foreground mb-2">Conversion Failed</h2>
                     <p className="text-muted-foreground mb-6">{error}</p>
-                    <Button onClick={handleReset} variant="outline">
-                      Try Again
-                    </Button>
+                    <Button onClick={handleReset} variant="outline">Try Again</Button>
                   </div>
                 )}
               </div>
 
-              {/* Supported formats */}
               <div className="mt-6">
                 <SupportedFormats />
               </div>
             </div>
 
-            {/* History sidebar */}
             <div className="lg:col-span-1">
               <ConversionHistory history={history} onClear={clearHistory} />
             </div>
@@ -128,7 +130,6 @@ const Index = () => {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-border mt-auto py-6">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           Convert documents, images, and more to PDF instantly
