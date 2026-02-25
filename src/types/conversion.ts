@@ -1,12 +1,7 @@
 export interface ConversionResult {
-  ConversionCost: number;
-  Files: {
-    FileName: string;
-    FileExt: string;
-    FileSize: number;
-    FileId: string;
-    Url: string;
-  }[];
+  fileName: string;
+  fileSize: number;
+  downloadUrl: string;
 }
 
 export interface ConversionHistoryItem {
