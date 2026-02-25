@@ -12,7 +12,7 @@ interface FileDropZoneProps {
   disabled?: boolean;
 }
 
-export function FileDropZone({ onFilesSelect, selectedFiles, onClearFile, onClearAll, disabled }: FileDropZoneProps) {
+export function FileDropZone({ onFilesSelect, selectedFiles = [], onClearFile, onClearAll, disabled }: FileDropZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
