@@ -17,13 +17,9 @@ export function useConversion() {
     setResult(null);
 
     try {
-      // Simulate upload progress
       const progressInterval = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 30) {
-            clearInterval(progressInterval);
-            return 30;
-          }
+          if (prev >= 30) { clearInterval(progressInterval); return 30; }
           return prev + 5;
         });
       }, 100);
@@ -32,14 +28,10 @@ export function useConversion() {
       formData.append('file', file);
 
       setStatus('converting');
-      
-      // Update progress during "conversion"
+
       const conversionInterval = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(conversionInterval);
-            return 90;
-          }
+          if (prev >= 90) { clearInterval(conversionInterval); return 90; }
           return prev + 10;
         });
       }, 500);
@@ -56,27 +48,35 @@ export function useConversion() {
         throw new Error('Conversion failed. Please try again.');
       }
 
-      const data: ConversionResult[] = await response.json();
-      
-      if (!data?.[0]?.Files?.[0]?.Url) {
-        throw new Error('Invalid response from conversion service.');
+      // Get the response as a blob (raw PDF binary)
+      const blob = await response.blob();
+      const downloadUrl = URL.createObjectURL(blob);
+
+      // Try to extract filename from Content-Disposition header
+      const disposition = response.headers.get('Content-Disposition');
+      let fileName = file.name.replace(/\.[^/.]+$/, '') + '.pdf';
+      if (disposition) {
+        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        if (match?.[1]) {
+          fileName = match[1].replace(/['"]/g, '');
+        }
       }
 
+      const fileSize = blob.size;
+
       setProgress(100);
-      setResult(data[0]);
+      const conversionResult: ConversionResult = { fileName, fileSize, downloadUrl };
+      setResult(conversionResult);
       setStatus('success');
 
-      // Add to history
-      const historyItem: ConversionHistoryItem = {
+      setHistory((prev) => [{
         id: crypto.randomUUID(),
         originalFileName: file.name,
-        convertedFileName: data[0].Files[0].FileName,
-        downloadUrl: data[0].Files[0].Url,
-        fileSize: data[0].Files[0].FileSize,
+        convertedFileName: fileName,
+        downloadUrl,
+        fileSize,
         timestamp: new Date(),
-      };
-
-      setHistory((prev) => [historyItem, ...prev]);
+      }, ...prev]);
 
     } catch (err) {
       setStatus('error');
@@ -95,14 +95,5 @@ export function useConversion() {
     setHistory([]);
   }, []);
 
-  return {
-    status,
-    progress,
-    error,
-    result,
-    history,
-    convertFile,
-    reset,
-    clearHistory,
-  };
+  return { status, progress, error, result, history, convertFile, reset, clearHistory };
 }
