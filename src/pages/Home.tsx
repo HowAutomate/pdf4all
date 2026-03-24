@@ -45,7 +45,9 @@ const Home = () => {
             <div className="p-2 rounded-lg bg-gradient-to-br from-primary via-secondary to-accent">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-foreground">HowAutomate Tools</span>
+            <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" className="text-xl font-bold text-foreground hover:text-primary transition-colors">
+              HowAutomate Tools
+            </a>
           </div>
           <a
             href="https://howautomate.com/blog"
