@@ -14,9 +14,9 @@ const tools = [
     title: 'UGC Content Creation',
     description: 'Create stunning user-generated content for social media, ads, and marketing campaigns.',
     icon: Sparkles,
-    path: 'https://lovable.dev/projects/379e3402-3c22-48f9-8e56-4371016e0fe8',
+    path: '/ugc-content',
     gradient: 'from-emerald-500 to-teal-500',
-    external: true,
+    external: false,
   },
   {
     title: 'BMI Calculator',
