@@ -20,7 +20,7 @@ const UgcContent = () => {
 
       <main className="flex-1">
         <iframe
-          src="https://image2media-magic.lovable.app"
+          src="https://bira.lovable.app"
           className="w-full h-[calc(100vh-65px)] border-0"
           title="UGC Content Creation"
           allow="clipboard-write; clipboard-read"
