@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import BmiCalculator from "./pages/BmiCalculator";
 import DateTimeConverter from "./pages/DateTimeConverter";
+import UgcContent from "./pages/UgcContent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
