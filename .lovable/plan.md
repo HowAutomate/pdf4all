@@ -1,35 +1,21 @@
 
 
-## Problem
+## Embed UGC App via iframe
 
-The n8n webhook response format doesn't match what the frontend expects. 
+Since the UGC project is a full standalone app with its own auth and Supabase backend, the simplest way to serve it under `tools.howautomate.com/ugc-content` is to embed it in an iframe.
 
-**Frontend expects:**
-```json
-[{"ConversionCost": 1, "Files": [{"FileName": "...", "Url": "..."}]}]
-```
+### Steps
 
-**Webhook actually returns:**
-```json
-[{"mimeType":"application/pdf","fileType":"pdf","fileName":"output.pdf","fileExtension":"pdf","fileSize":"41.5 kB"}]
-```
+1. **Publish the UGC project** — Make sure [Image2Media Magic](/projects/379e3402-3c22-48f9-8e56-4371016e0fe8) is published (it should have a `.lovable.app` URL or custom domain).
 
-There is no `Url` field in the response. The n8n "Respond to Webhook" node is configured to return binary data (the PDF itself), so the response is likely the raw PDF binary — not JSON with a download link.
+2. **Create `src/pages/UgcContent.tsx`** — A simple page with a full-screen iframe pointing to the published UGC app URL. Include a header bar matching the other tool pages with a "Back to Tools" link.
 
-## Solution
+3. **Update `src/App.tsx`** — Add route `/ugc-content` pointing to the new `UgcContent` page.
 
-Update the frontend to:
-1. Receive the webhook response as a **binary blob** (the PDF file itself)
-2. Create a local **blob URL** (`URL.createObjectURL`) for download
-3. Update the `ConversionResult` type and `useConversion` hook to match this new flow
+4. **Update `src/pages/Home.tsx`** — Change the UGC tool card from an external link to an internal `<Link to="/ugc-content">` route.
 
-### Changes
-
-**`src/types/conversion.ts`** — Simplify the `ConversionResult` type to match the actual response (fileName, fileSize, plus a local blob URL).
-
-**`src/hooks/useConversion.ts`** — Instead of `response.json()`, use `response.blob()` to get the PDF binary, then create a download URL with `URL.createObjectURL(blob)`. Extract the filename from the Content-Disposition header or default to `output.pdf`.
-
-**`src/components/ConversionResult.tsx`** — Update to use the simplified result type with the blob URL for downloading.
-
-This approach works regardless of whether n8n sends binary data or JSON metadata — we handle both cases.
+### Technical notes
+- The iframe approach means auth and all UGC functionality work as-is — no code migration needed.
+- The URL bar will show `tools.howautomate.com/ugc-content` cleanly.
+- Alternative: If you'd prefer a fully separate subdomain (`ugc.howautomate.com`) instead, you can publish and connect a custom domain to the UGC project directly — no code changes needed here.
 
