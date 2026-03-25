@@ -1,21 +1,12 @@
 
 
-## Embed UGC App via iframe
+## Problem
 
-Since the UGC project is a full standalone app with its own auth and Supabase backend, the simplest way to serve it under `tools.howautomate.com/ugc-content` is to embed it in an iframe.
+The iframe in `UgcContent.tsx` points to `https://image2media-magic.lovable.app`, but from your screenshot the UGC project's published URL is actually `https://bira.lovable.app`.
 
-### Steps
+## Fix
 
-1. **Publish the UGC project** — Make sure [Image2Media Magic](/projects/379e3402-3c22-48f9-8e56-4371016e0fe8) is published (it should have a `.lovable.app` URL or custom domain).
+Update the iframe `src` in `src/pages/UgcContent.tsx` from `https://image2media-magic.lovable.app` to `https://bira.lovable.app`.
 
-2. **Create `src/pages/UgcContent.tsx`** — A simple page with a full-screen iframe pointing to the published UGC app URL. Include a header bar matching the other tool pages with a "Back to Tools" link.
-
-3. **Update `src/App.tsx`** — Add route `/ugc-content` pointing to the new `UgcContent` page.
-
-4. **Update `src/pages/Home.tsx`** — Change the UGC tool card from an external link to an internal `<Link to="/ugc-content">` route.
-
-### Technical notes
-- The iframe approach means auth and all UGC functionality work as-is — no code migration needed.
-- The URL bar will show `tools.howautomate.com/ugc-content` cleanly.
-- Alternative: If you'd prefer a fully separate subdomain (`ugc.howautomate.com`) instead, you can publish and connect a custom domain to the UGC project directly — no code changes needed here.
+That's it — one line change.
 
