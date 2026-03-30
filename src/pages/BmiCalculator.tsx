@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HeartPulse, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '@/assets/logo-transparent.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,15 +69,9 @@ const BmiCalculator = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center gap-3">
-          <Link to="/" className="p-2 rounded-lg hover:bg-muted transition-colors">
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500">
-              <HeartPulse className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-foreground">BMI Calculator</span>
-          </div>
         </div>
       </header>
 
