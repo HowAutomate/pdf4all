@@ -55,8 +55,6 @@ const DateTimeConverter = () => {
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
-            <span className="text-xl font-bold text-foreground">DateTime ↔ Epoch</span>
-          </div>
         </div>
       </header>
 
