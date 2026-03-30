@@ -1,4 +1,5 @@
 import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, ExternalLink } from 'lucide-react';
+import logo from '@/assets/logo-transparent.png';
 import { Link } from 'react-router-dom';
 
 const tools = [
