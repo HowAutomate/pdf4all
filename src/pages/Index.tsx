@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FileText, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { FileDropZone } from '@/components/FileDropZone';
 import { ConversionProgress } from '@/components/ConversionProgress';
@@ -42,6 +43,7 @@ const Index = () => {
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 

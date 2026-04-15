@@ -1,6 +1,7 @@
 import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, ExternalLink } from 'lucide-react';
 import logo from '@/assets/logo-transparent.png';
 import { Link } from 'react-router-dom';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const tools = [
   {
@@ -45,16 +46,19 @@ const Home = () => {
           <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </a>
-          <a
-            href="https://howautomate.com/blog"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <BookOpen className="w-4 h-4" />
-            Blog
-            <ExternalLink className="w-3 h-3" />
-          </a>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://howautomate.com/blog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <BookOpen className="w-4 h-4" />
+              Blog
+              <ExternalLink className="w-3 h-3" />
+            </a>
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 

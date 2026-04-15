@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const UgcContent = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-3">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 
