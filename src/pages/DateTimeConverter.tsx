@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Clock, ArrowLeft, ArrowRightLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
+import ThemeToggle from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -55,6 +56,7 @@ const DateTimeConverter = () => {
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 

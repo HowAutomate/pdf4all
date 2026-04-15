@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const UgcContent = () => {
   return (
@@ -9,6 +10,7 @@ const UgcContent = () => {
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
           </Link>
+          <ThemeToggle />
         </div>
       </header>
 
