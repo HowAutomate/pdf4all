@@ -3,6 +3,7 @@ import { Clock, ArrowLeft, ArrowRightLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
 import ThemeToggle from '@/components/ThemeToggle';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,6 +52,20 @@ const DateTimeConverter = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO
+        title="DateTime ↔ Epoch Converter - HowAutomate Tools"
+        description="Convert between human-readable dates and Unix epoch timestamps instantly. Free online datetime converter."
+        path="/datetime-converter"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'WebApplication',
+          name: 'DateTime to Epoch Converter',
+          url: 'https://tools.howautomate.com/datetime-converter',
+          applicationCategory: 'UtilitiesApplication',
+          operatingSystem: 'Any',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        }}
+      />
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
