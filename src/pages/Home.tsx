@@ -2,6 +2,7 @@ import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, ExternalLi
 import logo from '@/assets/logo-transparent.png';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '@/components/ThemeToggle';
+import { SEO } from '@/components/SEO';
 
 const tools = [
   {
