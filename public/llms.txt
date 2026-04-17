@@ -1,0 +1,17 @@
+# HowAutomate Tools
+> Free AI-powered productivity tools for businesses and individuals.
+> Built by HowAutomate — Data, AI & Automation agency (howautomate.com)
+
+## Tools
+
+- [PDF Converter](https://tools.howautomate.com/pdf-converter): Convert documents, images, spreadsheets and more to PDF instantly. Free, no signup required.
+- [BMI Calculator](https://tools.howautomate.com/bmi-calculator): Calculate Body Mass Index with health category interpretation. Supports metric and imperial units.
+- [DateTime Converter](https://tools.howautomate.com/datetime-converter): Convert dates and times across timezones and formats instantly.
+
+## About HowAutomate
+HowAutomate is a B2B AI & Automation agency helping businesses eliminate manual work using custom automation, AI assistants, and data workflows.
+
+- Website: https://howautomate.com
+- Contact: hello@howautomate.com
+- Phone: +91-96020-94213
+- Languages: English, Hindi
