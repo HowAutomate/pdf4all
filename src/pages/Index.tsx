@@ -3,6 +3,7 @@ import { FileText, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
 import ThemeToggle from '@/components/ThemeToggle';
+import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { FileDropZone } from '@/components/FileDropZone';
 import { ConversionProgress } from '@/components/ConversionProgress';
