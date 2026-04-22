@@ -35,7 +35,6 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
-
   .dark {
     --background: 250 30% 8%;
     --foreground: 250 20% 95%;
@@ -74,7 +73,81 @@
   body { @apply bg-background text-foreground; }
 }
 
-@layer utilities {
-  .animation-delay-500  { animation-delay: 500ms; }
-  .animation-delay-1000 { animation-delay: 1000ms; }
+/* 3D animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-18px) rotate(4deg); }
 }
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-12px) rotate(-3deg); }
+}
+@keyframes orb-drift-1 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25%       { transform: translate(40px, -60px) scale(1.1); }
+  50%       { transform: translate(-30px, -30px) scale(0.95); }
+  75%       { transform: translate(20px, 40px) scale(1.05); }
+}
+@keyframes orb-drift-2 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  25%       { transform: translate(-50px, 30px) scale(1.08); }
+  50%       { transform: translate(40px, -40px) scale(0.92); }
+  75%       { transform: translate(-20px, -30px) scale(1.12); }
+}
+@keyframes orb-drift-3 {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%       { transform: translate(30px, 50px) scale(1.05); }
+  66%       { transform: translate(-40px, -20px) scale(0.98); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,0.3), 0 0 40px rgba(139,92,246,0.1); }
+  50%       { box-shadow: 0 0 30px rgba(139,92,246,0.5), 0 0 60px rgba(139,92,246,0.2); }
+}
+@keyframes badge-ping {
+  0%  { transform: scale(1); opacity: 1; }
+  75% { transform: scale(1.4); opacity: 0; }
+  100%{ transform: scale(1.4); opacity: 0; }
+}
+
+.animate-float-slow   { animation: float-slow 6s ease-in-out infinite; }
+.animate-float-medium { animation: float-medium 4s ease-in-out infinite; }
+.animate-orb-1        { animation: orb-drift-1 18s ease-in-out infinite; }
+.animate-orb-2        { animation: orb-drift-2 22s ease-in-out infinite; }
+.animate-orb-3        { animation: orb-drift-3 26s ease-in-out infinite; }
+.animate-shimmer      { background-size: 200% auto; animation: shimmer 3s linear infinite; }
+.animate-glow-pulse   { animation: glow-pulse 3s ease-in-out infinite; }
+
+.glass-card {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.glass-card-hover:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(139,92,246,0.4);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.2), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.6), rgba(59,130,246,0.4), rgba(236,72,153,0.4));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.gradient-border:hover::before { opacity: 1; }
