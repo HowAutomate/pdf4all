@@ -87,28 +87,28 @@ const Home = () => {
       />
 
       {/* ── HEADER ────────────────────────────────────────────────────── */}
-      <header style={{ position:'sticky', top:0, zIndex:50, background:'rgba(7,4,15,0.88)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.07)' }}>
-        <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 32px', height:68, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+      <header style={{ position:'sticky', top:0, zIndex:50, background:'rgba(7,4,15,0.92)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 40px', height:80, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
 
           {/* logo */}
-          <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
+          <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" style={{ display:'flex', alignItems:'center', gap:12, textDecoration:'none' }}>
             <img
               src={logo}
               alt="HowAutomate"
-              style={{ height:42, width:'auto', filter:'brightness(0) invert(1)', display:'block' }}
+              style={{ height:56, width:'auto', display:'block' }}
             />
           </a>
 
           {/* nav */}
-          <nav style={{ display:'flex', alignItems:'center', gap:20 }}>
+          <nav style={{ display:'flex', alignItems:'center', gap:28 }}>
             <a href="https://howautomate.com/blog" target="_blank" rel="noopener noreferrer"
-              style={{ display:'flex', alignItems:'center', gap:5, fontSize:14, fontWeight:500, color:'rgba(255,255,255,0.5)', textDecoration:'none', transition:'color 0.15s' }}
+              style={{ display:'flex', alignItems:'center', gap:6, fontSize:14, fontWeight:500, color:'rgba(255,255,255,0.55)', textDecoration:'none', transition:'color 0.15s' }}
               onMouseEnter={e=>(e.currentTarget.style.color='#fff')}
-              onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.5)')}>
+              onMouseLeave={e=>(e.currentTarget.style.color='rgba(255,255,255,0.55)')}>
               <BookOpen size={15}/> Blog <ExternalLink size={11}/>
             </a>
             <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer"
-              style={{ fontSize:13, fontWeight:700, padding:'8px 18px', borderRadius:10, background:'linear-gradient(135deg,#7c3aed,#2563eb)', color:'#fff', textDecoration:'none', letterSpacing:'0.01em', boxShadow:'0 4px 14px rgba(124,58,237,0.4)', transition:'opacity 0.15s' }}
+              style={{ fontSize:13, fontWeight:700, padding:'10px 22px', borderRadius:12, background:'linear-gradient(135deg,#7c3aed,#2563eb)', color:'#fff', textDecoration:'none', letterSpacing:'0.02em', boxShadow:'0 4px 16px rgba(124,58,237,0.45)', transition:'opacity 0.15s' }}
               onMouseEnter={e=>(e.currentTarget.style.opacity='0.82')}
               onMouseLeave={e=>(e.currentTarget.style.opacity='1')}>
               Visit HowAutomate
@@ -299,7 +299,7 @@ const Home = () => {
           <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', gap:40, marginBottom:40 }}>
             <div style={{ maxWidth:280 }}>
               <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer">
-                <img src={logo} alt="HowAutomate" style={{ height:38, marginBottom:14, filter:'brightness(0) invert(1)', display:'block' }}/>
+                <img src={logo} alt="HowAutomate" style={{ height:48, marginBottom:14, display:'block' }}/>
               </a>
               <p style={{ fontSize:13, color:'rgba(255,255,255,0.32)', lineHeight:1.75 }}>
                 Free tools for everyone, by the{' '}

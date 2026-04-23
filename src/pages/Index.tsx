@@ -53,10 +53,10 @@ const Index = () => {
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         }}
       />
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <img src={logo} alt="HowAutomate" className="h-12 w-auto" />
+      <header className="border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between" style={{ minHeight: 72 }}>
+          <Link to="/" className="flex items-center gap-3 hover:opacity-85 transition-opacity">
+            <img src={logo} alt="HowAutomate" className="h-14 w-auto" />
           </Link>
           <ThemeToggle />
         </div>
