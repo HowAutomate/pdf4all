@@ -11,10 +11,12 @@ const UgcContent = () => {
         <meta name="robots" content="noindex, nofollow" />
         <link rel="canonical" href="https://tools.howautomate.com/ugc-content" />
       </Helmet>
-      <header className="border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-10">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between" style={{ minHeight: 72 }}>
-          <Link to="/" className="flex items-center gap-3 hover:opacity-85 transition-opacity">
-            <img src={logo} alt="HowAutomate" className="h-14 w-auto" />
+      <header style={{ position:'sticky', top:0, zIndex:10, background:'rgba(7,4,15,0.92)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 40px', height:80, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none', opacity:1, transition:'opacity 0.15s' }}
+            onMouseEnter={e=>(e.currentTarget.style.opacity='0.82')}
+            onMouseLeave={e=>(e.currentTarget.style.opacity='1')}>
+            <img src={logo} alt="HowAutomate" style={{ height:56, width:'auto', display:'block' }} />
           </Link>
           <ThemeToggle />
         </div>

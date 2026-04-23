@@ -70,23 +70,29 @@ const BmiCalculator = () => {
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         }}
       />
-      <header className="border-b border-border bg-card/80 backdrop-blur-xl sticky top-0 z-20">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between" style={{ minHeight: 72 }}>
-          <Link to="/" className="flex items-center gap-3 hover:opacity-85 transition-opacity">
-            <img src={logo} alt="HowAutomate" className="h-14 w-auto" />
+      <header style={{ position:'sticky', top:0, zIndex:20, background:'rgba(7,4,15,0.92)', backdropFilter:'blur(24px)', WebkitBackdropFilter:'blur(24px)', borderBottom:'1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 40px', height:80, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <Link to="/" style={{ display:'flex', alignItems:'center', textDecoration:'none', opacity:1, transition:'opacity 0.15s' }}
+            onMouseEnter={e=>(e.currentTarget.style.opacity='0.82')}
+            onMouseLeave={e=>(e.currentTarget.style.opacity='1')}>
+            <img src={logo} alt="HowAutomate" style={{ height:56, width:'auto', display:'block' }} />
           </Link>
           <ThemeToggle />
         </div>
       </header>
 
       {/* Tool hero */}
-      <div className="bg-gradient-to-br from-pink-600 via-rose-600 to-red-700 text-white py-12 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="inline-flex p-3 rounded-2xl bg-white/10 mb-4">
-            <HeartPulse className="w-7 h-7" />
+      <div style={{ position:'relative', overflow:'hidden', background:'#07040f', padding:'72px 32px 64px', textAlign:'center' }}>
+        <div style={{ position:'absolute', inset:0, pointerEvents:'none' }}>
+          <div style={{ position:'absolute', top:'-20%', left:'50%', transform:'translateX(-50%)', width:600, height:400, borderRadius:'50%', background:'radial-gradient(circle, rgba(219,39,119,0.2) 0%, transparent 65%)' }}/>
+          <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)', backgroundSize:'52px 52px' }}/>
+        </div>
+        <div style={{ position:'relative', maxWidth:600, margin:'0 auto' }}>
+          <div style={{ display:'inline-flex', padding:14, borderRadius:18, background:'linear-gradient(135deg,#db2777,#e11d48)', boxShadow:'0 8px 28px rgba(219,39,119,0.45)', marginBottom:20 }}>
+            <HeartPulse style={{ width:30, height:30, color:'#fff' }} />
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-2">BMI Calculator</h1>
-          <p className="text-white/70 text-base">
+          <h1 style={{ fontSize:'clamp(2rem,4vw,2.8rem)', fontWeight:900, color:'#fff', margin:'0 0 14px', letterSpacing:'-0.03em' }}>BMI Calculator</h1>
+          <p style={{ fontSize:16, color:'rgba(255,255,255,0.48)', lineHeight:1.7, margin:0 }}>
             Enter your height and weight to instantly calculate your Body Mass Index.
           </p>
         </div>
