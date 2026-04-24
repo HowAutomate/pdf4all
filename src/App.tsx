@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import BmiCalculator from "./pages/BmiCalculator";
 import DateTimeConverter from "./pages/DateTimeConverter";
 import UgcContent from "./pages/UgcContent";
+import PasswordGenerator from "./pages/PasswordGenerator";
+import WordCounter from "./pages/WordCounter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,8 @@ const App = () => (
           <Route path="/bmi-calculator" element={<BmiCalculator />} />
           <Route path="/datetime-converter" element={<DateTimeConverter />} />
           <Route path="/ugc-content" element={<UgcContent />} />
+          <Route path="/password-generator" element={<PasswordGenerator />} />
+          <Route path="/word-counter" element={<WordCounter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

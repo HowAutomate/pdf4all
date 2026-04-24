@@ -1,7 +1,26 @@
+User-agent: *
+Allow: /
+Disallow: /ugc-content
+
 User-agent: Googlebot
 Allow: /
 
 User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
 Allow: /
 
 User-agent: Twitterbot
@@ -10,38 +29,13 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: OAI-SearchBot
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: GPTBot
-Disallow: /
-
-User-agent: Google-Extended
-Disallow: /
-
-User-agent: anthropic-ai
-Disallow: /
-
-User-agent: ClaudeBot
-Disallow: /
-
 User-agent: CCBot
 Disallow: /
 
 User-agent: cohere-ai
 Disallow: /
 
-User-agent: Diffbot
+User-agent: anthropic-ai
 Disallow: /
-
-User-agent: FacebookBot
-Disallow: /
-
-User-agent: *
-Allow: /
-Disallow: /ugc-content
 
 Sitemap: https://tools.howautomate.com/sitemap.xml
