@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, Search, Zap, Lock, Gift, Smartphone, ExternalLink } from 'lucide-react';
+import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, Search, Zap, Lock, Gift, Smartphone, ExternalLink, Code2 } from 'lucide-react';
 import logo from '@/assets/logo-transparent.png';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
@@ -46,8 +46,9 @@ const allTools = [
   { title:'DateTime \u2194 Epoch', desc:'Switch between human-readable dates and Unix timestamps with a live clock.',    icon:Clock,     path:'/datetime-converter', from:'#d97706', to:'#ea580c', glow:'rgba(217,119,6,0.45)',   category:'Developer', badge:null,      live:true  },
   { title:'UGC Creator',        desc:'Build stunning social media and ad creatives for marketing campaigns.',           icon:Sparkles,  path:'/ugc-content',        from:'#059669', to:'#0891b2', glow:'rgba(5,150,105,0.45)',   category:'Marketing', badge:'New',     live:true  },
   { title:'Password Generator', desc:'Generate strong random passwords with custom length, uppercase, numbers and symbols.',  icon:Lock,      path:'/password-generator', from:'#dc2626', to:'#ea580c', glow:'rgba(220,38,38,0.45)',   category:'Developer', badge:'New',     live:true  },
-  { title:'Word Counter',       desc:'Count words, characters, sentences, paragraphs and estimate reading time instantly.', icon:BookOpen,  path:'/word-counter',       from:'#16a34a', to:'#059669', glow:'rgba(22,163,74,0.45)',   category:'Utilities', badge:'New',     live:true  },
-  { title:'PDF Compressor',     desc:'Compress PDF files to a fraction of their size without losing quality.',              icon:FileText,  path:null,                  from:'#0284c7', to:'#0ea5e9', glow:'rgba(2,132,199,0.25)',   category:'PDF',       badge:'Soon',    live:false },
+  { title:'Word Counter',       desc:'Count words, characters, sentences, paragraphs and estimate reading time instantly.', icon:BookOpen,  path:'/word-counter',            from:'#16a34a', to:'#059669', glow:'rgba(22,163,74,0.45)',   category:'Utilities', badge:'New',     live:true  },
+  { title:'JSON → TS & Zod',   desc:'Convert JSON to TypeScript interfaces, Zod schemas, and JSON Schema instantly.',     icon:Code2,     path:'/json-to-typescript-zod',  from:'#0ea5e9', to:'#7c3aed', glow:'rgba(14,165,233,0.45)',  category:'Developer', badge:'New',     live:true  },
+  { title:'PDF Compressor',     desc:'Compress PDF files to a fraction of their size without losing quality.',              icon:FileText,  path:null,                       from:'#0284c7', to:'#0ea5e9', glow:'rgba(2,132,199,0.25)',   category:'PDF',       badge:'Soon',    live:false },
 ];
 
 const cats     = ['All','PDF','Health','Developer','Marketing','Utilities'];
@@ -161,7 +162,7 @@ const Home = () => {
 
           {/* stats */}
           <div style={{ display:'flex', justifyContent:'center', flexWrap:'wrap', gap:'20px 52px' }}>
-            {[['6+','Live Tools'],['0','Signups Needed'],['\u221e','Free Usage'],['100%','In-Browser']].map(([n,l])=>(
+            {[['7+','Live Tools'],['0','Signups Needed'],['\u221e','Free Usage'],['100%','In-Browser']].map(([n,l])=>(
               <div key={l} style={{ textAlign:'center' }}>
                 <div style={{ fontSize:30, fontWeight:900, lineHeight:1, backgroundImage:'linear-gradient(135deg,#a78bfa,#60a5fa)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>{n}</div>
                 <div style={{ fontSize:10, color:'rgba(255,255,255,0.35)', textTransform:'uppercase', letterSpacing:'0.12em', marginTop:5 }}>{l}</div>
@@ -308,7 +309,7 @@ const Home = () => {
             <div style={{ display:'flex', gap:56, flexWrap:'wrap' }}>
               <div>
                 <p style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.28)', textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 16px' }}>Tools</p>
-                {[['PDF Converter','/pdf-converter'],['BMI Calculator','/bmi-calculator'],['DateTime Converter','/datetime-converter'],['UGC Creator','/ugc-content'],['Password Generator','/password-generator'],['Word Counter','/word-counter']].map(([lbl,to])=>(
+                {[['PDF Converter','/pdf-converter'],['BMI Calculator','/bmi-calculator'],['DateTime Converter','/datetime-converter'],['UGC Creator','/ugc-content'],['Password Generator','/password-generator'],['Word Counter','/word-counter'],['JSON → TS & Zod','/json-to-typescript-zod']].map(([lbl,to])=>(
                   <div key={to} style={{ marginBottom:10 }}>
                     <Link to={to} style={{ fontSize:14, color:'rgba(255,255,255,0.42)', textDecoration:'none', transition:'color 0.15s' }}
                       onMouseEnter={e=>(e.currentTarget.style.color='#fff')}

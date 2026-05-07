@@ -10,6 +10,7 @@ import DateTimeConverter from "./pages/DateTimeConverter";
 import UgcContent from "./pages/UgcContent";
 import PasswordGenerator from "./pages/PasswordGenerator";
 import WordCounter from "./pages/WordCounter";
+import JsonToTypescript from "./pages/JsonToTypescript";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/ugc-content" element={<UgcContent />} />
           <Route path="/password-generator" element={<PasswordGenerator />} />
           <Route path="/word-counter" element={<WordCounter />} />
+          <Route path="/json-to-typescript-zod" element={<JsonToTypescript />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
