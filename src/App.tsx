@@ -11,6 +11,7 @@ import UgcContent from "./pages/UgcContent";
 import PasswordGenerator from "./pages/PasswordGenerator";
 import WordCounter from "./pages/WordCounter";
 import JsonToTypescript from "./pages/JsonToTypescript";
+import PdfCompressor from "./pages/PdfCompressor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/password-generator" element={<PasswordGenerator />} />
           <Route path="/word-counter" element={<WordCounter />} />
           <Route path="/json-to-typescript-zod" element={<JsonToTypescript />} />
+          <Route path="/pdf-compressor" element={<PdfCompressor />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
