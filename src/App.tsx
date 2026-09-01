@@ -12,6 +12,7 @@ import PasswordGenerator from "./pages/PasswordGenerator";
 import WordCounter from "./pages/WordCounter";
 import JsonToTypescript from "./pages/JsonToTypescript";
 import PdfCompressor from "./pages/PdfCompressor";
+import GstInvoiceGenerator from "./pages/GstInvoiceGenerator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/word-counter" element={<WordCounter />} />
           <Route path="/json-to-typescript-zod" element={<JsonToTypescript />} />
           <Route path="/pdf-compressor" element={<PdfCompressor />} />
+          <Route path="/gst-invoice-generator" element={<GstInvoiceGenerator />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

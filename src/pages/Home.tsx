@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, Search, Zap, Lock, Gift, Smartphone, ExternalLink, Code2 } from 'lucide-react';
+import { FileText, Sparkles, HeartPulse, Clock, ArrowRight, BookOpen, Search, Zap, Lock, Gift, Smartphone, ExternalLink, Code2, Receipt } from 'lucide-react';
 import logo from '@/assets/logo-transparent.png';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/SEO';
@@ -49,9 +49,10 @@ const allTools = [
   { title:'Word Counter',       desc:'Count words, characters, sentences, paragraphs and estimate reading time instantly.', icon:BookOpen,  path:'/word-counter',            from:'#16a34a', to:'#059669', glow:'rgba(22,163,74,0.45)',   category:'Utilities', badge:'New',     live:true  },
   { title:'JSON → TS & Zod',   desc:'Convert JSON to TypeScript interfaces, Zod schemas, and JSON Schema instantly.',     icon:Code2,     path:'/json-to-typescript-zod',  from:'#0ea5e9', to:'#7c3aed', glow:'rgba(14,165,233,0.45)',  category:'Developer', badge:'New',     live:true  },
   { title:'PDF Compressor',     desc:'Compress PDF files to a fraction of their size without losing quality.',              icon:FileText,  path:'/pdf-compressor',          from:'#0284c7', to:'#0ea5e9', glow:'rgba(2,132,199,0.45)',   category:'PDF',       badge:'New',     live:true  },
+  { title:'GST Invoice Generator', desc:'Create a GST-compliant tax invoice — auto CGST/SGST/IGST split, HSN codes, amount in words.', icon:Receipt, path:'/gst-invoice-generator', from:'#2563eb', to:'#0ea5e9', glow:'rgba(37,99,235,0.45)', category:'Business', badge:'New', live:true },
 ];
 
-const cats     = ['All','PDF','Health','Developer','Marketing','Utilities'];
+const cats     = ['All','PDF','Health','Developer','Marketing','Utilities','Business'];
 const features = [
   { icon:Zap,        title:'Instant',       desc:'Runs entirely in your browser — no upload, no waiting.',        from:'#d97706', to:'#f59e0b' },
   { icon:Lock,       title:'100% Private',  desc:'Files never leave your device. We have zero access.',           from:'#7c3aed', to:'#6366f1' },
@@ -309,7 +310,7 @@ const Home = () => {
             <div style={{ display:'flex', gap:56, flexWrap:'wrap' }}>
               <div>
                 <p style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.28)', textTransform:'uppercase', letterSpacing:'0.1em', margin:'0 0 16px' }}>Tools</p>
-                {[['PDF Converter','/pdf-converter'],['PDF Compressor','/pdf-compressor'],['BMI Calculator','/bmi-calculator'],['DateTime Converter','/datetime-converter'],['UGC Creator','/ugc-content'],['Password Generator','/password-generator'],['Word Counter','/word-counter'],['JSON → TS & Zod','/json-to-typescript-zod']].map(([lbl,to])=>(
+                {[['PDF Converter','/pdf-converter'],['PDF Compressor','/pdf-compressor'],['BMI Calculator','/bmi-calculator'],['DateTime Converter','/datetime-converter'],['UGC Creator','/ugc-content'],['Password Generator','/password-generator'],['Word Counter','/word-counter'],['JSON → TS & Zod','/json-to-typescript-zod'],['GST Invoice Generator','/gst-invoice-generator']].map(([lbl,to])=>(
                   <div key={to} style={{ marginBottom:10 }}>
                     <Link to={to} style={{ fontSize:14, color:'rgba(255,255,255,0.42)', textDecoration:'none', transition:'color 0.15s' }}
                       onMouseEnter={e=>(e.currentTarget.style.color='#fff')}
