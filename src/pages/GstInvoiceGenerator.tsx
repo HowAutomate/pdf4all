@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Receipt, Plus, Trash2, Printer } from 'lucide-react';
+import { Receipt, Plus, Trash2, Printer, Upload, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
 import { SEO } from '@/components/SEO';
@@ -72,11 +72,15 @@ const inr = (n: number) => n.toLocaleString('en-IN', { minimumFractionDigits: 2,
 
 const GstInvoiceGenerator = () => {
   const [seller, setSeller] = useState({ name: '', address: '', gstin: '', state: '', phone: '', email: '' });
+  const [sellerLogo, setSellerLogo] = useState<string | null>(null);
   const [buyer, setBuyer] = useState({ name: '', address: '', gstin: '', state: '' });
   const [meta, setMeta] = useState({
     invoiceNumber: '',
     invoiceDate: new Date().toISOString().slice(0, 10),
     placeOfSupply: '',
+  });
+  const [bank, setBank] = useState({
+    accountName: '', bankName: '', accountNumber: '', ifsc: '', branch: '', upi: '',
   });
   const [items, setItems] = useState<LineItem[]>([newItem()]);
   const [notes, setNotes] = useState('Thank you for your business.');
@@ -86,7 +90,17 @@ const GstInvoiceGenerator = () => {
   const updateItem = (id: number, patch: Partial<LineItem>) =>
     setItems(prev => prev.map(i => i.id === id ? { ...i, ...patch } : i));
 
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => setSellerLogo(reader.result as string);
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
   const isIntraState = seller.state && buyer.state && seller.state === buyer.state;
+  const hasBankDetails = Object.values(bank).some(v => v.trim() !== '');
 
   const computed = useMemo(() => {
     const rows = items.map(item => {
@@ -159,6 +173,29 @@ const GstInvoiceGenerator = () => {
           <Card>
             <CardContent className="pt-5 space-y-3">
               <h2 className="font-bold text-sm uppercase tracking-wide text-muted-foreground">Your Business (Seller)</h2>
+              <div>
+                <Label>Logo (optional)</Label>
+                <div className="flex items-center gap-3">
+                  {sellerLogo ? (
+                    <div className="relative">
+                      <img src={sellerLogo} alt="Logo preview" className="h-14 w-14 object-contain border border-border rounded" />
+                      <button
+                        type="button"
+                        onClick={() => setSellerLogo(null)}
+                        className="absolute -top-2 -right-2 bg-background border border-border rounded-full p-0.5"
+                        aria-label="Remove logo"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="flex items-center gap-2 text-sm border border-dashed border-border rounded-md px-3 py-2 cursor-pointer hover:bg-muted">
+                      <Upload className="w-4 h-4" /> Upload logo
+                      <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                    </label>
+                  )}
+                </div>
+              </div>
               <div><Label>Business Name</Label><Input value={seller.name} onChange={e => setSeller({ ...seller, name: e.target.value })} placeholder="Acme Enterprises" /></div>
               <div><Label>Address</Label><Textarea rows={2} value={seller.address} onChange={e => setSeller({ ...seller, address: e.target.value })} placeholder="Shop no., street, city, PIN" /></div>
               <div className="grid grid-cols-2 gap-3">
@@ -237,6 +274,20 @@ const GstInvoiceGenerator = () => {
         </Card>
 
         <Card className={`${inputCls} mb-6`}>
+          <CardContent className="pt-5 space-y-3">
+            <h2 className="font-bold text-sm uppercase tracking-wide text-muted-foreground">Bank / Payment Details (optional)</h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div><Label>Account Holder Name</Label><Input value={bank.accountName} onChange={e => setBank({ ...bank, accountName: e.target.value })} placeholder="Name as per bank records" /></div>
+              <div><Label>Bank Name</Label><Input value={bank.bankName} onChange={e => setBank({ ...bank, bankName: e.target.value })} placeholder="e.g. HDFC Bank" /></div>
+              <div><Label>Account Number</Label><Input value={bank.accountNumber} onChange={e => setBank({ ...bank, accountNumber: e.target.value })} placeholder="XXXXXXXXXXXXXX" inputMode="numeric" /></div>
+              <div><Label>IFSC Code</Label><Input value={bank.ifsc} onChange={e => setBank({ ...bank, ifsc: e.target.value.toUpperCase() })} placeholder="HDFC0001234" maxLength={11} /></div>
+              <div><Label>Branch</Label><Input value={bank.branch} onChange={e => setBank({ ...bank, branch: e.target.value })} placeholder="Branch / city" /></div>
+              <div><Label>UPI ID</Label><Input value={bank.upi} onChange={e => setBank({ ...bank, upi: e.target.value })} placeholder="name@upi" /></div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={`${inputCls} mb-6`}>
           <CardContent className="pt-5">
             <Label>Notes / Terms</Label>
             <Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} />
@@ -252,12 +303,15 @@ const GstInvoiceGenerator = () => {
         {/* Invoice preview + printable area */}
         <div id="invoice-preview" className="max-w-3xl mx-auto bg-white text-black rounded-lg shadow-lg p-8 print:shadow-none print:p-0">
           <div className="flex justify-between items-start border-b-2 border-gray-800 pb-4 mb-4">
-            <div>
-              <h2 className="text-xl font-bold">{seller.name || 'Your Business Name'}</h2>
-              <p className="text-sm whitespace-pre-line text-gray-600">{seller.address || 'Business address'}</p>
-              {seller.gstin && <p className="text-sm text-gray-600">GSTIN: {seller.gstin}</p>}
-              {seller.phone && <p className="text-sm text-gray-600">Phone: {seller.phone}</p>}
-              {seller.email && <p className="text-sm text-gray-600">Email: {seller.email}</p>}
+            <div className="flex items-start gap-3">
+              {sellerLogo && <img src={sellerLogo} alt="Business logo" className="h-16 w-16 object-contain shrink-0" />}
+              <div>
+                <h2 className="text-xl font-bold">{seller.name || 'Your Business Name'}</h2>
+                <p className="text-sm whitespace-pre-line text-gray-600">{seller.address || 'Business address'}</p>
+                {seller.gstin && <p className="text-sm text-gray-600">GSTIN: {seller.gstin}</p>}
+                {seller.phone && <p className="text-sm text-gray-600">Phone: {seller.phone}</p>}
+                {seller.email && <p className="text-sm text-gray-600">Email: {seller.email}</p>}
+              </div>
             </div>
             <div className="text-right">
               <h1 className="text-2xl font-extrabold text-gray-800">TAX INVOICE</h1>
@@ -322,6 +376,20 @@ const GstInvoiceGenerator = () => {
             <p className="text-xs font-bold uppercase text-gray-500">Amount in Words</p>
             <p className="text-sm">{amountInWords(computed.grandTotal)}</p>
           </div>
+
+          {hasBankDetails && (
+            <div className="mb-4 border border-gray-300 rounded p-3" style={{ breakInside: 'avoid' }}>
+              <p className="text-xs font-bold uppercase text-gray-500 mb-1.5">Bank Details for Payment</p>
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+                {bank.accountName && <p><span className="text-gray-500">A/c Name: </span>{bank.accountName}</p>}
+                {bank.bankName && <p><span className="text-gray-500">Bank: </span>{bank.bankName}</p>}
+                {bank.accountNumber && <p><span className="text-gray-500">A/c No: </span><span className="font-medium">{bank.accountNumber}</span></p>}
+                {bank.ifsc && <p><span className="text-gray-500">IFSC: </span><span className="font-medium">{bank.ifsc}</span></p>}
+                {bank.branch && <p><span className="text-gray-500">Branch: </span>{bank.branch}</p>}
+                {bank.upi && <p><span className="text-gray-500">UPI ID: </span>{bank.upi}</p>}
+              </div>
+            </div>
+          )}
 
           {notes && (
             <div className="mb-4">
