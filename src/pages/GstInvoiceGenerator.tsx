@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
@@ -84,6 +85,7 @@ const GstInvoiceGenerator = () => {
   });
   const [items, setItems] = useState<LineItem[]>([newItem()]);
   const [notes, setNotes] = useState('Thank you for your business.');
+  const [roundOff, setRoundOff] = useState(false);
 
   const addItem = () => setItems(prev => [...prev, newItem()]);
   const removeItem = (id: number) => setItems(prev => prev.length > 1 ? prev.filter(i => i.id !== id) : prev);
@@ -110,11 +112,25 @@ const GstInvoiceGenerator = () => {
     });
     const subtotal = rows.reduce((s, r) => s + r.taxable, 0);
     const totalGst = rows.reduce((s, r) => s + r.gstAmount, 0);
-    const grandTotal = subtotal + totalGst;
-    return { rows, subtotal, totalGst, grandTotal };
-  }, [items]);
+    const rawTotal = subtotal + totalGst;
+    const rounded = Math.round(rawTotal);
+    const roundOffAmount = roundOff ? rounded - rawTotal : 0;
+    const grandTotal = roundOff ? rounded : rawTotal;
+    return { rows, subtotal, totalGst, rawTotal, roundOffAmount, grandTotal };
+  }, [items, roundOff]);
 
-  const handlePrint = () => window.print();
+  const handlePrint = () => {
+    // Browsers stamp document.title into the printed page header, so swap in a
+    // neutral invoice name for the duration of the print and restore it after.
+    const previousTitle = document.title;
+    const name = [meta.invoiceNumber && `Invoice-${meta.invoiceNumber}`, seller.name]
+      .filter(Boolean).join(' - ');
+    document.title = name || 'Tax Invoice';
+    const restore = () => { document.title = previousTitle; };
+    window.addEventListener('afterprint', restore, { once: true });
+    window.print();
+    setTimeout(restore, 1000);
+  };
 
   const inputCls = 'print:hidden';
 
@@ -288,9 +304,18 @@ const GstInvoiceGenerator = () => {
         </Card>
 
         <Card className={`${inputCls} mb-6`}>
-          <CardContent className="pt-5">
-            <Label>Notes / Terms</Label>
-            <Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} />
+          <CardContent className="pt-5 space-y-4">
+            <div>
+              <Label>Notes / Terms</Label>
+              <Textarea rows={2} value={notes} onChange={e => setNotes(e.target.value)} />
+            </div>
+            <div className="flex items-start gap-2">
+              <Checkbox id="round-off" checked={roundOff} onCheckedChange={v => setRoundOff(v === true)} className="mt-0.5" />
+              <div>
+                <Label htmlFor="round-off" className="cursor-pointer">Round off total to nearest rupee</Label>
+                <p className="text-xs text-muted-foreground">Adds a Round Off line and shows the grand total as a whole number.</p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -368,7 +393,10 @@ const GstInvoiceGenerator = () => {
               ) : (
                 <div className="flex justify-between py-1"><span>IGST</span><span>₹{inr(computed.totalGst)}</span></div>
               )}
-              <div className="flex justify-between py-2 border-t-2 border-gray-800 font-bold text-base"><span>Total</span><span>₹{inr(computed.grandTotal)}</span></div>
+              {roundOff && (
+                <div className="flex justify-between py-1"><span>Round Off</span><span>{computed.roundOffAmount < 0 ? '-' : '+'}₹{inr(Math.abs(computed.roundOffAmount))}</span></div>
+              )}
+              <div className="flex justify-between py-2 border-t-2 border-gray-800 font-bold text-base"><span>Total</span><span>₹{roundOff ? computed.grandTotal.toLocaleString('en-IN') : inr(computed.grandTotal)}</span></div>
             </div>
           </div>
 
@@ -398,7 +426,9 @@ const GstInvoiceGenerator = () => {
             </div>
           )}
 
-          <p className="text-xs text-gray-400 text-center border-t border-gray-200 pt-3">This is a computer-generated invoice.</p>
+          <p className="text-xs text-gray-500 text-center border-t border-gray-200 pt-3 leading-relaxed">
+            This is a computer-generated invoice and does not require a physical signature or stamp.
+          </p>
         </div>
       </main>
 
