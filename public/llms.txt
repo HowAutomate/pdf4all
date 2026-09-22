@@ -1,12 +1,32 @@
 # HowAutomate Tools
-> Free AI-powered productivity tools for businesses and individuals.
+> Free browser-based productivity tools for businesses and individuals.
+> Every tool runs entirely in the visitor's browser — files are never uploaded to a server.
 > Built by HowAutomate — Data, AI & Automation agency (howautomate.com)
 
-## Tools
+## Business & GST
 
-- [PDF Converter](https://tools.howautomate.com/pdf-converter): Convert documents, images, spreadsheets and more to PDF instantly. Free, no signup required.
+- [GST Invoice Generator](https://tools.howautomate.com/gst-invoice-generator): Create a GST-compliant Indian tax invoice with automatic CGST/SGST vs IGST split, HSN/SAC codes, amount in words, optional bank details, optional round-off, and print/save as PDF.
+
+## PDF Tools
+
+- [Merge PDF](https://tools.howautomate.com/merge-pdf): Combine up to 25 PDF files into one document, with drag-free reordering before download. No watermark.
+- [Split PDF](https://tools.howautomate.com/split-pdf): Extract chosen pages (e.g. 1-3, 7), split every page into its own file, or cut a PDF into fixed-size chunks. Multi-file results download as a ZIP.
+- [PDF Compressor](https://tools.howautomate.com/pdf-compressor): Reduce PDF file size by removing metadata and optimising internal structure.
+- [File to PDF](https://tools.howautomate.com/pdf-converter): Convert documents, images and spreadsheets to properly formatted PDFs.
+
+## Developer
+
+- [JSON to TypeScript & Zod](https://tools.howautomate.com/json-to-typescript-zod): Turn a JSON sample into TypeScript interfaces, Zod schemas or JSON Schema.
+- [Password Generator](https://tools.howautomate.com/password-generator): Generate strong random passwords with custom length, numbers and symbols.
+- [DateTime / Epoch Converter](https://tools.howautomate.com/datetime-converter): Convert between human-readable dates and Unix timestamps, with a live clock.
+
+## Everyday Utilities
+
+- [Word Counter](https://tools.howautomate.com/word-counter): Count words, characters, sentences and paragraphs, plus estimated reading time.
+
+## Health
+
 - [BMI Calculator](https://tools.howautomate.com/bmi-calculator): Calculate Body Mass Index with health category interpretation. Supports metric and imperial units.
-- [DateTime Converter](https://tools.howautomate.com/datetime-converter): Convert dates and times across timezones and formats instantly.
 
 ## About HowAutomate
 HowAutomate is a B2B AI & Automation agency helping businesses eliminate manual work using custom automation, AI assistants, and data workflows.

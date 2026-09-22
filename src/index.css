@@ -121,6 +121,11 @@
 .animate-shimmer      { background-size: 200% auto; animation: shimmer 3s linear infinite; }
 .animate-glow-pulse   { animation: glow-pulse 3s ease-in-out infinite; }
 
+/* Hide secondary nav links on narrow screens so the header never wraps. */
+@media (max-width: 640px) {
+  .hide-sm { display: none !important; }
+}
+
 .glass-card {
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(16px);

@@ -353,7 +353,9 @@ const GstInvoiceGenerator = () => {
             {buyer.gstin && <p className="text-sm text-gray-600">GSTIN: {buyer.gstin}</p>}
           </div>
 
-          <table className="w-full text-sm border-collapse mb-4">
+          {/* Scrolls sideways on phones; print keeps the full table on the page. */}
+          <div className="overflow-x-auto mb-4 print:overflow-visible print:mb-4">
+          <table className="w-full text-sm border-collapse min-w-[520px] print:min-w-0">
             <thead>
               <tr className="bg-gray-100 text-left">
                 <th className="border border-gray-300 px-2 py-1">#</th>
@@ -381,6 +383,7 @@ const GstInvoiceGenerator = () => {
               ))}
             </tbody>
           </table>
+          </div>
 
           <div className="flex justify-end mb-4">
             <div className="w-64 text-sm">
