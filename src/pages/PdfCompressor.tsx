@@ -1,293 +1,247 @@
-import { useState, useCallback, useRef } from 'react';
-import { FileText, Upload, Download, X, ArrowLeft, CheckCircle, Zap, Lock, Shield } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import logo from '@/assets/logo-transparent.png';
-import { SEO } from '@/components/SEO';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { FileDown, Upload, Download, Loader2, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
-import { PDFDocument } from 'pdf-lib';
+import { ToolLayout } from '@/components/ToolLayout';
+import { Button } from '@/components/ui/button';
+import { PAGES } from '@/data/pages';
 
-type Quality = 'basic' | 'standard' | 'maximum';
+const ACCENT = { from: '#0284c7', to: '#7dd3fc', soft: 'rgba(2,132,199,0.18)' };
+const KB = 1024;
+const MAX_BYTES = 100 * 1024 * 1024;
 
-const QUALITY_LABELS: Record<Quality, { label: string; desc: string; color: string }> = {
-  basic:    { label: 'Basic',    desc: 'Remove metadata only',          color: '#34d399' },
-  standard: { label: 'Standard', desc: 'Remove metadata + compress structure', color: '#60a5fa' },
-  maximum:  { label: 'Maximum',  desc: 'All optimisations + object streams',   color: '#a78bfa' },
+type Level = 'light' | 'medium' | 'strong';
+const LEVEL_INFO: Record<Level, { label: string; desc: string }> = {
+  light: { label: 'Light', desc: 'Best quality, smaller saving' },
+  medium: { label: 'Recommended', desc: 'Good quality, good saving' },
+  strong: { label: 'Strong', desc: 'Smallest file, lower image quality' },
 };
 
-function formatSize(bytes: number): string {
-  if (bytes < 1024)       return `${bytes} B`;
-  if (bytes < 1024 ** 2)  return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 ** 2).toFixed(2)} MB`;
+const SIZE_LINKS: [string, string][] = [
+  ['/pdf-compressor', 'Compress PDF'], ['/compress-pdf-to-100kb', '100 KB'], ['/compress-pdf-to-200kb', '200 KB'],
+  ['/compress-pdf-to-500kb', '500 KB'], ['/compress-pdf-to-1mb', '1 MB'],
+];
+
+const fmt = (b: number) => (b < KB * KB ? `${(b / KB).toFixed(b < 10 * KB ? 1 : 0)} KB` : `${(b / KB / KB).toFixed(2)} MB`);
+
+interface Outcome {
+  bytes: Uint8Array;
+  textKept: boolean;
+  fits?: boolean;
+  images?: { found: number; recompressed: number };
+  /** Best text-keeping result when the main result had to rasterise. */
+  alternative?: Uint8Array;
 }
 
 export default function PdfCompressor() {
+  const { pathname } = useLocation();
+  const route = pathname in PAGES ? pathname : '/pdf-compressor';
+  const meta = PAGES[route];
+  const presetKb = meta.pdfTargetKb;
+
   const [file, setFile] = useState<File | null>(null);
-  const [quality, setQuality] = useState<Quality>('standard');
-  const [compressing, setCompressing] = useState(false);
-  const [result, setResult] = useState<{ blob: Blob; originalSize: number; compressedSize: number } | null>(null);
+  const [mode, setMode] = useState<'reduce' | 'target'>(presetKb ? 'target' : 'reduce');
+  const [level, setLevel] = useState<Level>('medium');
+  const [targetKb, setTargetKb] = useState(presetKb ?? 200);
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState('');
+  const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Bumped on every new run, file or setting change: a slower, older run must
+  // never overwrite the result shown for the current file.
+  const runId = useRef(0);
+  const show = (id: number, o: Outcome) => { if (id === runId.current) setOutcome(o); };
 
-  const reset = () => { setFile(null); setResult(null); };
+  useEffect(() => {
+    setMode(presetKb ? 'target' : 'reduce');
+    if (presetKb) setTargetKb(presetKb);
+    setOutcome(null);
+  }, [presetKb]);
 
-  const handleFile = (f: File) => {
-    if (f.type !== 'application/pdf') { toast.error('Please upload a PDF file.'); return; }
-    if (f.size > 50 * 1024 * 1024)   { toast.error('File must be under 50 MB.');   return; }
-    setFile(f);
-    setResult(null);
+  const pick = (f: File | undefined) => {
+    if (!f) return;
+    if (f.type !== 'application/pdf' && !/\.pdf$/i.test(f.name)) { toast.error('Please choose a PDF file.'); return; }
+    if (f.size > MAX_BYTES) { toast.error('That PDF is over 100 MB — too large to process in the browser.'); return; }
+    runId.current++;
+    setFile(f); setOutcome(null); setBusy(false); setProgress('');
   };
 
-  const onDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
-  }, []);
-
-  const compress = async () => {
+  const run = async () => {
     if (!file) return;
-    setCompressing(true);
+    const id = ++runId.current;
+    setBusy(true); setOutcome(null); setProgress('Reading PDF…');
     try {
-      const bytes = await file.arrayBuffer();
-      const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
-
-      if (quality === 'standard' || quality === 'maximum') {
-        doc.setTitle('');
-        doc.setAuthor('');
-        doc.setSubject('');
-        doc.setKeywords([]);
-        doc.setProducer('');
-        doc.setCreator('');
+      const original = new Uint8Array(await file.arrayBuffer());
+      const lib = await import('@/lib/pdfCompress/browser');
+      if (mode === 'reduce') {
+        setProgress('Compressing images…');
+        const r = await lib.compressKeepText(original, lib.LEVELS[level]);
+        show(id, { bytes: r.bytes, textKept: true, images: r.report });
+      } else {
+        const target = Math.round(targetKb * KB);
+        if (original.length <= target) {
+          show(id, { bytes: original, textKept: true, fits: true });
+          return;
+        }
+        const kept = await lib.compressKeepTextToTarget(original, target, (i, n) => { if (id === runId.current) setProgress(`Compressing images (step ${i} of ${n})…`); });
+        if (kept.fits) {
+          show(id, { bytes: kept.result.bytes, textKept: true, fits: true, images: kept.result.report });
+        } else {
+          const raster = await lib.rasterizeToTarget(original, target, m => { if (id === runId.current) setProgress(m); });
+          if (raster && raster.bytes.length < kept.result.bytes.length) {
+            show(id, { bytes: raster.bytes, textKept: false, fits: raster.fits, alternative: kept.result.bytes, images: kept.result.report });
+          } else {
+            show(id, { bytes: kept.result.bytes, textKept: true, fits: false, images: kept.result.report });
+          }
+        }
       }
-
-      const saved = await doc.save({
-        useObjectStreams: quality === 'maximum',
-        addDefaultPage: false,
-      });
-
-      const blob = new Blob([saved], { type: 'application/pdf' });
-      setResult({ blob, originalSize: file.size, compressedSize: blob.size });
-    } catch {
-      toast.error('Could not compress this PDF. It may be encrypted or corrupted.');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : '';
+      if (id === runId.current) toast.error(/encrypt/i.test(msg) ? 'This PDF is password-protected. Remove the password first.' : 'Could not compress this PDF — it may be damaged.');
+      console.error(err);
     } finally {
-      setCompressing(false);
+      if (id === runId.current) { setBusy(false); setProgress(''); }
     }
   };
 
-  const download = () => {
-    if (!result) return;
-    const url = URL.createObjectURL(result.blob);
+  const save = (bytes: Uint8Array, suffix: string) => {
+    const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
     const a = document.createElement('a');
     a.href = url;
-    a.download = file ? file.name.replace(/\.pdf$/i, '-compressed.pdf') : 'compressed.pdf';
+    a.download = `${file!.name.replace(/\.pdf$/i, '')}-${suffix}.pdf`;
     a.click();
-    URL.revokeObjectURL(url);
-    toast.success('Downloaded!');
+    setTimeout(() => URL.revokeObjectURL(url), 10_000);
   };
 
-  const savings = result
-    ? Math.max(0, Math.round((1 - result.compressedSize / result.originalSize) * 100))
-    : 0;
+  const orig = file?.size ?? 0;
+  const got = outcome?.bytes.length ?? 0;
+  // Never offer a file that isn't meaningfully smaller than the original.
+  const noGain = !!outcome && mode === 'reduce' && got >= orig * 0.98;
+  const alreadyUnder = !!outcome && mode === 'target' && outcome.bytes.length === orig && orig <= targetKb * KB;
+  // Floor, so 99.6% never reads as a misleading "100%".
+  const saving = orig ? Math.floor((1 - got / orig) * 100) : 0;
+
+  const pill = (active: boolean) =>
+    `rounded-xl border px-3 py-2.5 text-left transition-colors ${active ? 'border-sky-500 bg-sky-500/15 text-white' : 'border-white/10 bg-white/[0.03] text-white/60 hover:text-white'}`;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#07040f', color: '#fff', fontFamily: "'Inter','system-ui',sans-serif" }}>
-      <SEO
-        title="Free PDF Compressor — Reduce PDF Size Online | HowAutomate"
-        description="Compress PDF files for free in your browser. Remove metadata, optimise structure, and reduce file size — no upload, 100% private."
-        path="/pdf-compressor"
-        jsonLd={{
-          '@context': 'https://schema.org',
-          '@type': 'WebApplication',
-          name: 'PDF Compressor',
-          url: 'https://tools.howautomate.com/pdf-compressor',
-          applicationCategory: 'UtilitiesApplication',
-          operatingSystem: 'Any',
-          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        }}
-      />
-
-      {/* HEADER */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(7,4,15,0.92)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 32px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <a href="https://tools.howautomate.com" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <img src={logo} alt="HowAutomate Tools" style={{ height: 52, width: 'auto' }} />
-          </a>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'rgba(255,255,255,0.5)', textDecoration: 'none', transition: 'color 0.15s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
-            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}>
-            <ArrowLeft size={14} /> All Tools
+    <ToolLayout
+      seoTitle={meta.title}
+      seoDescription={meta.description}
+      path={route}
+      eyebrow="PDF Utility"
+      eyebrowIcon={FileDown}
+      title={meta.h1}
+      subtitle={meta.intro}
+      accent={ACCENT}
+      faqs={meta.faqs}
+      maxWidth={760}
+    >
+      <div className="flex flex-wrap justify-center gap-2 mb-6">
+        {SIZE_LINKS.map(([to, label]) => (
+          <Link key={to} to={to}
+            className={`rounded-full px-3 py-1 text-xs font-semibold border ${route === to ? 'border-sky-500 bg-sky-500/15 text-white' : 'border-white/10 text-white/55 hover:text-white'}`}>
+            {label}
           </Link>
+        ))}
+      </div>
+
+      <div
+        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={e => { e.preventDefault(); setDragOver(false); pick(e.dataTransfer.files?.[0]); }}
+        onClick={() => inputRef.current?.click()}
+        className="rounded-2xl border-2 border-dashed text-center cursor-pointer transition-colors p-8"
+        style={{ borderColor: dragOver ? ACCENT.from : 'rgba(255,255,255,0.15)', background: dragOver ? ACCENT.soft : 'rgba(255,255,255,0.03)' }}
+      >
+        <Upload className="w-8 h-8 mx-auto" style={{ color: ACCENT.to }} />
+        <p className="text-white font-semibold mt-3">{file ? `${file.name} · ${fmt(file.size)}` : 'Choose a PDF or drop it here'}</p>
+        <p className="text-xs mt-1 text-white/45">Up to 100 MB · compressed on your device, never uploaded</p>
+        <input ref={inputRef} type="file" accept="application/pdf,.pdf" className="hidden" onChange={e => { pick(e.target.files?.[0]); e.target.value = ''; }} />
+      </div>
+
+      <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="flex gap-2 mb-4">
+          {(['reduce', 'target'] as const).map(m => (
+            <button key={m} onClick={() => { runId.current++; setBusy(false); setMode(m); setOutcome(null); }}
+              className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold border ${mode === m ? 'border-sky-500 bg-sky-500/15 text-white' : 'border-white/10 text-white/55'}`}>
+              {m === 'reduce' ? 'Reduce size' : 'Exact size'}
+            </button>
+          ))}
         </div>
-      </header>
-
-      {/* HERO */}
-      <section style={{ position: 'relative', overflow: 'hidden', padding: '64px 32px 48px', textAlign: 'center' }}>
-        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: '-10%', left: '20%', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(2,132,199,0.18) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', top: '5%', right: '15%', width: 320, height: 320, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.12) 0%, transparent 65%)' }} />
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)', backgroundSize: '56px 56px' }} />
-        </div>
-
-        <div style={{ position: 'relative', maxWidth: 600, margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 15px', borderRadius: 100, background: 'rgba(2,132,199,0.12)', border: '1px solid rgba(2,132,199,0.3)', fontSize: 11, fontWeight: 700, color: '#7dd3fc', marginBottom: 22, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-            <FileText size={11} /> PDF Utility
-          </div>
-          <h1 style={{ fontSize: 'clamp(2rem,5vw,3.2rem)', fontWeight: 900, margin: '0 0 14px', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
-            PDF Compressor
-          </h1>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.46)', lineHeight: 1.75, margin: '0 0 12px' }}>
-            Reduce PDF file size in your browser — no upload, no account, 100% private.
-          </p>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.28)', lineHeight: 1.6 }}>
-            Removes metadata and optimises the internal PDF structure. Best results on documents with complex cross-references.
-          </p>
-        </div>
-      </section>
-
-      {/* MAIN */}
-      <main style={{ maxWidth: 720, margin: '0 auto', padding: '0 24px 80px' }}>
-
-        {/* quality selector */}
-        <div style={{ marginBottom: 24 }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Compression Level</p>
-          <div style={{ display: 'flex', gap: 10 }}>
-            {(Object.keys(QUALITY_LABELS) as Quality[]).map((q) => {
-              const info = QUALITY_LABELS[q];
-              const active = quality === q;
-              return (
-                <button key={q} onClick={() => setQuality(q)} style={{ flex: 1, padding: '12px 16px', borderRadius: 12, border: active ? `1px solid ${info.color}55` : '1px solid rgba(255,255,255,0.09)', background: active ? `${info.color}12` : 'rgba(255,255,255,0.04)', color: active ? info.color : 'rgba(255,255,255,0.45)', fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left' }}>
-                  <div style={{ marginBottom: 4 }}>{info.label}</div>
-                  <div style={{ fontSize: 11, fontWeight: 400, color: active ? `${info.color}aa` : 'rgba(255,255,255,0.28)' }}>{info.desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* drop zone */}
-        {!file && (
-          <div
-            onDrop={onDrop}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onClick={() => inputRef.current?.click()}
-            style={{ border: `2px dashed ${dragOver ? 'rgba(2,132,199,0.7)' : 'rgba(255,255,255,0.12)'}`, borderRadius: 18, padding: '64px 32px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s', background: dragOver ? 'rgba(2,132,199,0.05)' : 'rgba(255,255,255,0.02)' }}
-          >
-            <div style={{ width: 56, height: 56, borderRadius: 14, background: 'linear-gradient(135deg,#0284c7,#0ea5e9)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
-              <Upload size={22} style={{ color: '#fff' }} />
-            </div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Drop your PDF here</p>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>or click to browse — max 50 MB</p>
-            <input ref={inputRef} type="file" accept=".pdf,application/pdf" style={{ display: 'none' }} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
-          </div>
-        )}
-
-        {/* file selected */}
-        {file && !result && (
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 18, padding: 28 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 11, background: 'linear-gradient(135deg,#0284c7,#0ea5e9)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <FileText size={18} style={{ color: '#fff' }} />
-                </div>
-                <div>
-                  <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 2 }}>{file.name}</p>
-                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{formatSize(file.size)}</p>
-                </div>
-              </div>
-              <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 4 }}
-                onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#fff')}
-                onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)')}>
-                <X size={18} />
+        {mode === 'reduce' ? (
+          <div className="grid grid-cols-3 gap-2">
+            {(Object.keys(LEVEL_INFO) as Level[]).map(l => (
+              <button key={l} onClick={() => { runId.current++; setBusy(false); setLevel(l); setOutcome(null); }} className={pill(level === l)}>
+                <span className="block text-sm font-bold">{LEVEL_INFO[l].label}</span>
+                <span className="block text-[11px] opacity-70 mt-0.5">{LEVEL_INFO[l].desc}</span>
               </button>
-            </div>
-            <Button onClick={compress} disabled={compressing} style={{ width: '100%', background: 'linear-gradient(135deg,#0284c7,#0ea5e9)', color: '#fff', height: 48, fontSize: 15, fontWeight: 700, borderRadius: 12, border: 'none', cursor: compressing ? 'wait' : 'pointer' }}>
-              {compressing ? 'Compressing…' : `Compress PDF — ${QUALITY_LABELS[quality].label}`}
-            </Button>
+            ))}
           </div>
-        )}
-
-        {/* result */}
-        {result && (
-          <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 18, padding: 28 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24 }}>
-              <CheckCircle size={22} style={{ color: '#34d399', flexShrink: 0 }} />
-              <span style={{ fontSize: 16, fontWeight: 700, color: '#fff' }}>Compression complete</span>
-            </div>
-
-            {/* stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 24 }}>
-              {[
-                { label: 'Original',   value: formatSize(result.originalSize),   color: 'rgba(255,255,255,0.6)' },
-                { label: 'Compressed', value: formatSize(result.compressedSize),  color: '#60a5fa' },
-                { label: 'Saved',      value: savings > 0 ? `${savings}%` : '—', color: savings > 0 ? '#34d399' : 'rgba(255,255,255,0.35)' },
-              ].map((s) => (
-                <div key={s.label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '14px 16px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.07)' }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: s.color, marginBottom: 4 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s.label}</div>
-                </div>
+        ) : (
+          <div>
+            <label htmlFor="target-kb" className="block text-[11px] font-bold uppercase tracking-wider text-white/45 mb-1.5">Maximum size (KB)</label>
+            <div className="flex flex-wrap gap-2 items-center">
+              <input id="target-kb" type="number" min={10} value={targetKb} onChange={e => { setTargetKb(Number(e.target.value)); setOutcome(null); }}
+                className="w-32 rounded-lg border border-white/15 bg-black/30 px-3 py-2 text-white text-sm outline-none focus:border-sky-500" />
+              {[100, 200, 500, 1024].map(k => (
+                <button key={k} onClick={() => { setTargetKb(k); setOutcome(null); }}
+                  className={`rounded-full px-3 py-1 text-xs border ${targetKb === k ? 'border-sky-500 text-white' : 'border-white/10 text-white/55'}`}>
+                  {k === 1024 ? '1 MB' : `${k} KB`}
+                </button>
               ))}
             </div>
-
-            {savings === 0 && (
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textAlign: 'center', marginBottom: 20 }}>
-                This PDF is already well-optimised — little to no size reduction possible without re-encoding images.
-              </p>
-            )}
-
-            <div style={{ display: 'flex', gap: 10 }}>
-              <Button onClick={download} style={{ flex: 1, background: 'linear-gradient(135deg,#0284c7,#0ea5e9)', color: '#fff', height: 46, fontSize: 14, fontWeight: 700, borderRadius: 12, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                <Download size={16} /> Download Compressed PDF
-              </Button>
-              <button onClick={reset} style={{ padding: '0 20px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                New file
-              </button>
-            </div>
           </div>
         )}
+        <Button onClick={run} disabled={!file || busy || (mode === 'target' && !(targetKb >= 10))} className="w-full mt-5 h-11"
+          style={{ background: file ? `linear-gradient(135deg,${ACCENT.from},#2563eb)` : undefined, color: '#fff' }}>
+          {busy ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{progress || 'Working…'}</> : file ? 'Compress PDF' : 'Choose a PDF first'}
+        </Button>
+      </div>
 
-        {/* features */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginTop: 32 }}>
-          {[
-            { icon: Lock,   title: '100% Private',   desc: 'Files never leave your browser' },
-            { icon: Zap,    title: 'Instant',         desc: 'Runs in-browser, no server' },
-            { icon: Shield, title: 'No limits',       desc: 'Compress as many as you need' },
-          ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 14px', textAlign: 'center' }}>
-              <Icon size={18} style={{ color: '#7dd3fc', margin: '0 auto 8px' }} />
-              <p style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{title}</p>
-              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.32)' }}>{desc}</p>
-            </div>
-          ))}
+      {outcome && file && (
+        <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+          {noGain || alreadyUnder ? (
+            <p className="flex gap-2 text-sm text-white/80">
+              <Info className="w-4 h-4 mt-0.5 shrink-0 text-sky-300" />
+              {alreadyUnder
+                ? `Your PDF is already ${fmt(orig)} — under the ${targetKb >= 1024 ? targetKb / 1024 + ' MB' : targetKb + ' KB'} limit, so it doesn’t need compressing.`
+                : `This PDF is already about as small as it gets at this level (${fmt(orig)} → ${fmt(got)}). ${level !== 'strong' ? 'Try "Strong", or ' : ''}use "Exact size" if you need it under a specific limit.`}
+            </p>
+          ) : (
+            <>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-xl bg-black/20 p-3"><p className="text-lg font-black text-white/60">{fmt(orig)}</p><p className="text-[11px] uppercase tracking-wider text-white/40">Original</p></div>
+                <div className="rounded-xl bg-black/20 p-3"><p className="text-lg font-black text-sky-300">{fmt(got)}</p><p className="text-[11px] uppercase tracking-wider text-white/40">Compressed</p></div>
+                <div className="rounded-xl bg-black/20 p-3"><p className="text-lg font-black text-emerald-300">−{saving}%</p><p className="text-[11px] uppercase tracking-wider text-white/40">Saved</p></div>
+              </div>
+              <div className="mt-4 space-y-2 text-sm">
+                {outcome.textKept ? (
+                  <p className="flex gap-2 text-white/75"><CheckCircle className="w-4 h-4 mt-0.5 shrink-0 text-emerald-400" />
+                    Text, links and layout kept exactly{outcome.images ? ` · ${outcome.images.recompressed} of ${outcome.images.found} images recompressed` : ''}.</p>
+                ) : (
+                  <p className="flex gap-2 text-amber-200"><AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                    To fit the limit, pages were converted to images — the text can no longer be selected or searched. Fine for most upload portals.</p>
+                )}
+                {mode === 'target' && outcome.fits === false && (
+                  <p className="flex gap-2 text-amber-200"><AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                    Couldn’t get this PDF under the limit at a readable quality — this is the smallest version possible. Try splitting it into fewer pages.</p>
+                )}
+              </div>
+              <Button onClick={() => save(outcome.bytes, mode === 'target' ? `${Math.ceil(got / KB)}kb` : 'compressed')} className="w-full mt-4 h-11"
+                style={{ background: `linear-gradient(135deg,${ACCENT.from},#2563eb)`, color: '#fff' }}>
+                <Download className="w-4 h-4 mr-2" /> Download compressed PDF
+              </Button>
+              {outcome.alternative && outcome.alternative.length < orig && (
+                <button onClick={() => save(outcome.alternative!, 'compressed-text')} className="w-full mt-2 text-xs text-white/55 hover:text-white underline underline-offset-2">
+                  Or download the best version that keeps text ({fmt(outcome.alternative.length)} — over the limit)
+                </button>
+              )}
+            </>
+          )}
         </div>
-
-        {/* FAQ */}
-        <section style={{ marginTop: 48 }}>
-          <h2 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 20 }}>FAQ</h2>
-          {[
-            { q: 'How does client-side PDF compression work?', a: 'The PDF is loaded in your browser using pdf-lib, a pure JavaScript library. We remove embedded metadata (author, creator, title strings) and optimise the internal object structure and cross-reference tables. This reduces file size without modifying any text or images.' },
-            { q: 'Why is the size reduction modest?', a: 'Most modern PDFs already use reasonably efficient internal structures. Significant size reduction (50%+) requires re-encoding embedded images at lower quality — which this tool does not do, to preserve visual fidelity. For image-heavy PDFs, the savings may be small.' },
-            { q: 'Is my file secure?', a: 'Yes — your file never leaves your device. Everything happens in your browser using JavaScript. We have no server that receives, stores, or processes your PDF.' },
-            { q: 'What is the maximum file size?', a: 'Up to 50 MB. For very large files, compression may take a few seconds depending on your device.' },
-            { q: 'Does this work on encrypted or password-protected PDFs?', a: 'Partially — the tool will attempt to process encrypted PDFs but may not be able to save certain modifications. If the file is heavily restricted, you will see an error message.' },
-          ].map(({ q, a }) => (
-            <details key={q} style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '16px 0', cursor: 'pointer' }}>
-              <summary style={{ fontSize: 14, fontWeight: 600, color: '#fff', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {q} <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: 18 }}>+</span>
-              </summary>
-              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, marginTop: 10 }}>{a}</p>
-            </details>
-          ))}
-        </section>
-      </main>
-
-      {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '24px 32px', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
-        Free tools by{' '}
-        <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" style={{ color: '#7dd3fc', textDecoration: 'none' }}>HowAutomate</a>
-        &nbsp;&middot;&nbsp; Your file never leaves your browser
-      </footer>
-    </div>
+      )}
+    </ToolLayout>
   );
 }

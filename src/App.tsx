@@ -42,6 +42,10 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/pdf-converter" element={<Index />} />
+            <Route path="/word-to-pdf" element={<Index />} />
+            <Route path="/excel-to-pdf" element={<Index />} />
+            <Route path="/ppt-to-pdf" element={<Index />} />
+            <Route path="/jpg-to-pdf" element={<Index />} />
             <Route path="/bmi-calculator" element={<BmiCalculator />} />
             <Route path="/datetime-converter" element={<DateTimeConverter />} />
             <Route path="/ugc-content" element={<UgcContent />} />
@@ -49,6 +53,10 @@ const App = () => (
             <Route path="/word-counter" element={<WordCounter />} />
             <Route path="/json-to-typescript-zod" element={<JsonToTypescript />} />
             <Route path="/pdf-compressor" element={<PdfCompressor />} />
+            <Route path="/compress-pdf-to-100kb" element={<PdfCompressor />} />
+            <Route path="/compress-pdf-to-200kb" element={<PdfCompressor />} />
+            <Route path="/compress-pdf-to-500kb" element={<PdfCompressor />} />
+            <Route path="/compress-pdf-to-1mb" element={<PdfCompressor />} />
             <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/edit-pdf" element={<EditPdf />} />
             <Route path="/photo-resizer-in-kb" element={<ImageToKb />} />

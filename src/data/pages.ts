@@ -30,6 +30,8 @@ export interface PageMeta {
   noindex?: boolean;
   /** Settings for the KB resizer pages. */
   kb?: KbPreset;
+  /** PDF compressor pages: open in "exact size" mode with this target. */
+  pdfTargetKb?: number;
 }
 
 const KB_COMMON: Faq[] = [
@@ -49,6 +51,42 @@ const KB_COMMON: Faq[] = [
 
 const kbPage = (maxKb: number, h1: string, title: string, description: string, intro: string, extra: Faq[], minKb?: number): PageMeta => ({
   title, description, h1, intro, kb: { maxKb, minKb, mode: 'photo' }, faqs: [...extra, ...KB_COMMON],
+});
+
+const CONVERTER_FAQS: Faq[] = [
+  { q: 'Is it free?', a: 'Yes — no sign-up, no watermark and no daily limit on normal use.' },
+  { q: 'Are my files private?', a: 'Files are sent over an encrypted connection to our conversion server, converted, and removed once the conversion finishes. They are not shared or used for anything else.' },
+  { q: 'Which formats are supported?', a: 'Word (DOC, DOCX, ODT, RTF), Excel (XLS, XLSX, CSV, ODS), PowerPoint (PPT, PPTX, ODP), images (JPG, PNG and more), HTML and text files, among 40+ formats.' },
+];
+
+const PDF_COMPRESS_FAQS: Faq[] = [
+  {
+    q: 'Why is my PDF so large?',
+    a: 'Almost always because of images: scanned pages, phone photos of documents, and screenshots are stored at full camera resolution. Text itself takes very little space. That is why this tool focuses on recompressing images.',
+  },
+  {
+    q: 'Will the text still be selectable?',
+    a: 'Yes, in normal mode — only images are recompressed, so text, links and vector graphics are unchanged. In "Exact size" mode, if a very small limit cannot be met that way, pages are converted to images to fit; the result tells you clearly when this happened and also offers the best text-keeping version.',
+  },
+  {
+    q: 'Why did my PDF not get smaller?',
+    a: 'If a PDF is mostly text, or its images are already well compressed, there is little left to remove. The tool never gives you a file larger than the original — it tells you instead.',
+  },
+  {
+    q: 'Is my PDF uploaded to a server?',
+    a: 'No. The compression runs entirely in your browser on your own device, so it is safe for marksheets, ID proofs, bank statements and contracts.',
+  },
+];
+
+const pdfTargetPage = (kb: number, h1: string, title: string, description: string, intro: string): PageMeta => ({
+  title, description, h1, intro, pdfTargetKb: kb,
+  faqs: [
+    {
+      q: `How do I compress a PDF to under ${kb >= 1024 ? kb / 1024 + ' MB' : kb + ' KB'}?`,
+      a: `Choose your PDF on this page — the size limit is already set to ${kb >= 1024 ? kb / 1024 + ' MB' : kb + ' KB'}. The tool tries the gentlest compression that fits, so you keep as much quality as the limit allows.`,
+    },
+    ...PDF_COMPRESS_FAQS,
+  ],
 });
 
 export const PAGES: Record<string, PageMeta> = {
@@ -159,16 +197,69 @@ export const PAGES: Record<string, PageMeta> = {
     faqs: SPLIT_PDF_FAQS,
   },
   '/pdf-compressor': {
-    title: 'Free PDF Compressor — Reduce PDF Size Online | HowAutomate',
-    description: 'Compress PDF files for free in your browser. Remove metadata, optimise structure, and reduce file size — no upload, 100% private.',
-    h1: 'PDF Compressor',
-    intro: 'Reduce a PDF’s file size by removing metadata and optimising its internal structure, without changing how the pages look. Runs in your browser — nothing is uploaded.',
+    title: 'Compress PDF Online Free — Reduce PDF File Size | HowAutomate',
+    description: 'Reduce PDF file size for free by compressing the photos and scans inside it, while text stays sharp and selectable. Or shrink to an exact size like 200 KB. No upload.',
+    h1: 'Compress PDF',
+    intro: 'Most of a PDF’s size is its images — scans, photos and screenshots. This tool re-compresses them and keeps the text, links and layout exactly as they are. Need the file under a hard limit like 200 KB for a form? Switch to "Exact size". Everything runs in your browser; nothing is uploaded.',
+    faqs: PDF_COMPRESS_FAQS,
   },
+  '/compress-pdf-to-100kb': pdfTargetPage(100, 'Compress PDF to 100 KB',
+    'Compress PDF to 100 KB Online Free — For Forms & Portals | HowAutomate',
+    'Shrink a PDF to under 100 KB for exam, job and government portals. Keeps text where possible; free, in your browser, nothing uploaded.',
+    'Many application and scholarship portals cap document uploads at 100 KB. This page is pre-set to 100 KB: it first compresses the images inside the PDF and keeps the text; only if that is not enough does it convert pages to compact images to meet the limit — and tells you which it did.'),
+  '/compress-pdf-to-200kb': pdfTargetPage(200, 'Compress PDF to 200 KB',
+    'Compress PDF to 200 KB Online Free | HowAutomate',
+    'Reduce a PDF to under 200 KB for certificates, marksheets and ID uploads. Text kept wherever possible. Free, private, no sign-up.',
+    '200 KB is a common limit for uploading certificates, marksheets and ID proofs. Choose your PDF and get a file under 200 KB, with the text kept sharp whenever the limit allows it.'),
+  '/compress-pdf-to-500kb': pdfTargetPage(500, 'Compress PDF to 500 KB',
+    'Compress PDF to 500 KB Online Free | HowAutomate',
+    'Bring a scanned or photo-heavy PDF under 500 KB for email and upload portals. Free, keeps text, runs in your browser.',
+    'A 500 KB limit usually leaves room for good quality. Scanned documents and photo-heavy PDFs are compressed until they fit, with text and layout untouched in most cases.'),
+  '/compress-pdf-to-1mb': pdfTargetPage(1024, 'Compress PDF to 1 MB',
+    'Compress PDF to 1 MB Online Free | HowAutomate',
+    'Reduce a large PDF to under 1 MB for email attachments and upload portals. Free, high quality, nothing uploaded.',
+    'Email services and many portals reject attachments over 1 MB (or 2 MB). Large scans and presentations exported to PDF usually fit comfortably once their images are recompressed.'),
   '/pdf-converter': {
-    title: 'File to PDF Converter - HowAutomate Tools',
-    description: 'Free online file to PDF converter. Convert documents, images, spreadsheets and more to PDF instantly in your browser.',
-    h1: 'File to PDF Converter',
-    intro: 'Convert Word documents, spreadsheets, presentations and images into properly formatted PDFs, and PDFs back to Word.',
+    title: 'Convert to PDF Free — Word, Excel, PowerPoint, JPG to PDF | HowAutomate',
+    description: 'Free online PDF converter: turn Word, Excel, PowerPoint, images and 40+ other formats into properly formatted PDFs. No sign-up, no watermark.',
+    h1: 'Convert Files to PDF',
+    intro: 'Convert Word documents, Excel sheets, PowerPoint slides, images and 40+ other formats into properly formatted PDFs — and PDFs back to Word. Files are converted on our server and removed once the conversion finishes.',
+    faqs: CONVERTER_FAQS,
+  },
+  '/word-to-pdf': {
+    title: 'Word to PDF Converter Free — DOC & DOCX to PDF | HowAutomate',
+    description: 'Convert Word documents (DOC, DOCX) to PDF free, keeping fonts, tables and layout. No sign-up, no watermark, works on phone and desktop.',
+    h1: 'Word to PDF Converter',
+    intro: 'Turn a .docx or .doc file into a PDF that looks exactly like your document — fonts, tables, images, headers and page breaks included. Ideal for resumes, applications and letters. No sign-up and no watermark.',
+    faqs: [
+      { q: 'How do I convert a Word document to PDF?', a: 'Choose your .docx or .doc file, press Convert, and download the PDF. Multiple files can be converted in one go.' },
+      { q: 'Will my formatting stay the same?', a: 'Yes. The conversion uses a full document engine, so tables, images, fonts, headers, footers and page breaks are preserved. If a document uses an unusual font, a close match is used.' },
+      ...CONVERTER_FAQS,
+    ],
+  },
+  '/excel-to-pdf': {
+    title: 'Excel to PDF Converter Free — XLS & XLSX to PDF | HowAutomate',
+    description: 'Convert Excel spreadsheets (XLS, XLSX, CSV) to PDF free. Keeps tables and formatting. No sign-up, no watermark.',
+    h1: 'Excel to PDF Converter',
+    intro: 'Turn an Excel workbook or CSV file into a clean PDF for sharing, printing or emailing — tables, number formats and sheets included.',
+    faqs: [
+      { q: 'Will every sheet in my workbook be converted?', a: 'Yes, each sheet becomes part of the PDF. Set print areas and page orientation in Excel first if you want precise control over page breaks.' },
+      ...CONVERTER_FAQS,
+    ],
+  },
+  '/ppt-to-pdf': {
+    title: 'PowerPoint to PDF Converter Free — PPT & PPTX to PDF | HowAutomate',
+    description: 'Convert PowerPoint presentations (PPT, PPTX) to PDF free, one slide per page. No sign-up, no watermark.',
+    h1: 'PowerPoint to PDF Converter',
+    intro: 'Turn a PowerPoint deck into a PDF with one slide per page — easy to email, print and open on any device, with your fonts and images intact.',
+    faqs: CONVERTER_FAQS,
+  },
+  '/jpg-to-pdf': {
+    title: 'JPG to PDF Converter Free — Images to PDF | HowAutomate',
+    description: 'Convert JPG, PNG and other images to PDF free. Combine several photos into one PDF. No sign-up, no watermark.',
+    h1: 'JPG to PDF Converter',
+    intro: 'Turn photos and scans (JPG, PNG and more) into a PDF — handy for submitting documents, receipts and certificates. Add several images to convert them together.',
+    faqs: CONVERTER_FAQS,
   },
 
   /* ── Business & GST ─────────────────────────────────────────────── */

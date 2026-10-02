@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FileText, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
 import ThemeToggle from '@/components/ThemeToggle';
 import { SEO } from '@/components/SEO';
@@ -11,8 +11,13 @@ import { ConversionResult } from '@/components/ConversionResult';
 import { ConversionHistory } from '@/components/ConversionHistory';
 import { SupportedFormats } from '@/components/SupportedFormats';
 import { useConversion } from '@/hooks/useConversion';
+import { PAGES } from '@/data/pages';
 
 const Index = () => {
+  // One converter, several landing pages (/word-to-pdf, /excel-to-pdf, …).
+  const { pathname } = useLocation();
+  const route = pathname in PAGES ? pathname : '/pdf-converter';
+  const meta = PAGES[route];
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const { status, progress, error, results, history, convertFiles, reset, clearHistory, currentFileIndex, totalFiles } = useConversion();
 
@@ -40,14 +45,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="File to PDF Converter - HowAutomate Tools"
-        description="Free online file to PDF converter. Convert documents, images, spreadsheets and more to PDF instantly in your browser."
-        path="/pdf-converter"
+        title={meta.title}
+        description={meta.description}
+        path={route}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebApplication',
-          name: 'File to PDF Converter',
-          url: 'https://tools.howautomate.com/pdf-converter',
+          name: meta.h1,
+          url: `https://tools.howautomate.com${route}`,
           applicationCategory: 'UtilitiesApplication',
           operatingSystem: 'Any',
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -67,15 +72,8 @@ const Index = () => {
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Convert Any File to{' '}
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                PDF
-              </span>
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Upload your documents, images, spreadsheets, and more. Get perfectly formatted PDFs in seconds.
-            </p>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">{meta.h1}</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{meta.intro}</p>
           </div>
 
           <div className="grid gap-8 lg:grid-cols-3">
