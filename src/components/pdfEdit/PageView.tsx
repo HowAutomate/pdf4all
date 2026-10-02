@@ -3,13 +3,17 @@ import type { PDFPageProxy } from 'pdfjs-dist';
 import { Trash2, GripVertical, Minus, Plus, RotateCcw } from 'lucide-react';
 import { groupTextRuns, type RawTextItem, type TextRun } from '@/lib/pdfEdit/textRuns';
 import { matchFont, cssFontFor, type FontMatch, type FontFamily } from '@/lib/pdfEdit/fontMatch';
-import { sampleColors, rgbToCss } from '@/lib/pdfEdit/sampleColors';
+import { sampleColors, measureInkBand, rgbToCss } from '@/lib/pdfEdit/sampleColors';
 import type { RGB } from '@/lib/pdfEdit/applyEdits';
 
 export type Tool = 'edit' | 'text' | 'whiteout' | 'highlight' | 'sign' | 'image';
 
 export interface RunInfo extends TextRun { font: FontMatch }
-export interface RunEdit { text: string; color: RGB; background: RGB }
+export interface RunEdit {
+  text: string; color: RGB; background: RGB;
+  /** Measured glyph band (user space y, top > bottom) when wider than the font metrics. */
+  coverTop?: number; coverBottom?: number;
+}
 
 /** Something the user added. x/y/w/h are page points, top-left origin, as the reader sees the page. */
 export interface PageObject {
@@ -121,13 +125,19 @@ export function PageView(props: Props) {
     if (!runEdits[key]) {
       const canvas = canvasRef.current;
       let colors = { background: [1, 1, 1] as RGB, text: [0, 0, 0] as RGB };
+      let band: { coverTop?: number; coverBottom?: number } = {};
       if (canvas && rendered) {
         const rect = runRect(r);
         const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
         const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        colors = sampleColors(img, { x: rect.left * dpr, y: rect.top * dpr, w: rect.width * dpr, h: rect.height * dpr });
+        const px = { x: rect.left * dpr, y: rect.top * dpr, w: rect.width * dpr, h: rect.height * dpr };
+        colors = sampleColors(img, px);
+        // Small cap: enough for descenders the metrics missed, never enough to reach a tightly-set next line.
+        const ink = measureInkBand(img, px, colors.background, Math.ceil(px.h * 0.12));
+        // Canvas px → user space (pages with editable runs are unrotated).
+        band = { coverTop: vp.convertToPdfPoint(0, ink.top / dpr)[1], coverBottom: vp.convertToPdfPoint(0, ink.bottom / dpr)[1] };
       }
-      onRunEdit(key, { text: r.text, color: colors.text, background: colors.background });
+      onRunEdit(key, { text: r.text, color: colors.text, background: colors.background, ...band });
     }
     setEditing(key);
   };
@@ -203,9 +213,15 @@ export function PageView(props: Props) {
           fontSize: r.fontSize * scale, lineHeight: `${rect.height}px`,
         };
         if (edit) {
+          let coverRect = rect;
+          if (edit.coverTop !== undefined && edit.coverBottom !== undefined) {
+            const top = Math.min(rect.top, vp.convertToViewportPoint(0, edit.coverTop)[1]);
+            const bottom = Math.max(rect.top + rect.height, vp.convertToViewportPoint(0, edit.coverBottom)[1]);
+            coverRect = { ...rect, top, height: bottom - top };
+          }
           return (
             <RunEditor
-              key={key} rect={rect} edit={edit} style={fontStyle} editing={editing === key} interactive={tool === 'edit'}
+              key={key} rect={rect} coverRect={coverRect} edit={edit} style={fontStyle} editing={editing === key} interactive={tool === 'edit'}
               onStart={() => setEditing(key)}
               onChange={text => onRunEdit(key, { ...edit, text })}
               onCommit={text => {
@@ -250,8 +266,9 @@ export function PageView(props: Props) {
 
 /* ── an edited line of existing text ─────────────────────────────────── */
 
-function RunEditor({ rect, edit, style, editing, interactive, onStart, onChange, onCommit, onRevert }: {
+function RunEditor({ rect, coverRect, edit, style, editing, interactive, onStart, onChange, onCommit, onRevert }: {
   rect: { left: number; top: number; width: number; height: number };
+  coverRect: { left: number; top: number; width: number; height: number };
   edit: RunEdit; style: React.CSSProperties; editing: boolean; interactive: boolean;
   onStart: () => void; onChange: (text: string) => void; onCommit: (text: string) => void; onRevert: () => void;
 }) {
@@ -277,7 +294,7 @@ function RunEditor({ rect, edit, style, editing, interactive, onStart, onChange,
   return (
     <>
       {/* Cover for the original glyphs — same box the PDF cover will use. */}
-      <div className="absolute pointer-events-none" style={{ ...rect, background: rgbToCss(edit.background) }} />
+      <div className="absolute pointer-events-none" style={{ ...coverRect, background: rgbToCss(edit.background) }} />
       <span
         ref={ref}
         contentEditable={editing}

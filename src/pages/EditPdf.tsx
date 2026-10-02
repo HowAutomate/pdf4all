@@ -16,7 +16,7 @@ import {
   type Tool, type RunInfo, type RunEdit, type PageObject, type PendingImage,
 } from '@/components/pdfEdit/PageView';
 import { SignaturePad } from '@/components/pdfEdit/SignaturePad';
-import type { Edit } from '@/lib/pdfEdit/applyEdits';
+import type { Edit, EditReport } from '@/lib/pdfEdit/applyEdits';
 import { hexToRgb } from '@/lib/pdfEdit/sampleColors';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
@@ -37,15 +37,15 @@ const TOOLS: { id: Tool; label: string; icon: typeof Type; hint: string }[] = [
 const FAQS = [
   {
     q: 'Can I edit the existing text in my PDF?',
-    a: 'Yes. Choose "Edit text" and click any line — it becomes editable in place, in the closest matching font, size and colour. Edits work one line at a time: if your new text is longer, it extends to the right rather than re-flowing the paragraph, which is how most free PDF editors behave.',
+    a: 'Yes. Choose "Edit text" and click any line — it becomes editable in place. Edits work one line at a time: if your new text is longer, it extends to the right rather than re-flowing the paragraph, which is how most free PDF editors behave.',
   },
   {
-    q: 'Why does my edited text look slightly different?',
-    a: 'PDFs usually embed only the letters they use, so new text can\'t always be drawn in the original font file. The editor picks the closest standard font (Helvetica, Times or Courier family, regular/bold/italic) at the exact size and position of the original, and samples the colour from the page.',
+    q: 'Does the edited text keep the original font?',
+    a: 'Yes, whenever the PDF\'s own font contains every character you typed: the old text is deleted and your new text is written with the same font, size, spacing and colour. PDFs usually embed only the letters they use, so if you type a character the document never used, that line is written in the closest standard font instead. The text in the on-screen edit box is only a preview — the downloaded file uses the real font.',
   },
   {
     q: 'Is the original text deleted?',
-    a: 'It is covered, not removed: the old text is hidden under a patch that matches the background and the new text is drawn on top. That is fine for fixing a typo, a date or an amount, but do not use this to hide confidential information — the covered text can still be extracted from the file. For that you need a proper redaction tool.',
+    a: 'Yes, in most PDFs: the old text is removed from the file, not just hidden, so it can\'t be copied or extracted afterwards. For a few layouts (unusual fonts, text inside embedded graphics, some letter-spaced headings) a line can\'t be cut out safely; those lines are covered with a patch matching the background instead, and the message after downloading tells you how many. If you are removing confidential information, check that message says nothing was covered.',
   },
   {
     q: 'Can I sign a PDF with this?',
@@ -231,8 +231,11 @@ export default function EditPdf() {
         const page = Number(p);
         const run = runsByPage[page]?.find(r => runKey(page, r.id) === key);
         if (!run) continue;
+        // Cover (fallback only) reaches the measured glyph band, so descenders don't peek out.
+        const ascent = Math.max(run.ascent, (e.coverTop ?? -Infinity) - run.y);
+        const descent = Math.max(run.descent, run.y - (e.coverBottom ?? Infinity));
         edits.push({
-          kind: 'replace', page, x: run.x, y: run.y, width: run.width, ascent: run.ascent, descent: run.descent,
+          kind: 'replace', page, x: run.x, y: run.y, width: run.width, ascent, descent,
           fontSize: run.fontSize, text: e.text, font: run.font, color: e.color, background: e.background,
         });
       }
@@ -267,7 +270,9 @@ export default function EditPdf() {
       }
       // pdf-lib + fontkit are only needed to save, so they load on first download.
       const { applyEdits } = await import('@/lib/pdfEdit/applyEdits');
+      const report: EditReport = { originalFont: 0, substituteFont: 0, covered: 0 };
       const out = await applyEdits(bytes.slice(), edits, {
+        report,
         loadUnicodeFont: weight => fetch(weight === 'bold' ? unicodeBoldFontUrl : unicodeFontUrl).then(r => r.arrayBuffer()),
       });
       const url = URL.createObjectURL(new Blob([out], { type: 'application/pdf' }));
@@ -276,7 +281,16 @@ export default function EditPdf() {
       a.download = fileName.replace(/\.pdf$/i, '') + '-edited.pdf';
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 10_000);
-      toast.success('Edited PDF downloaded.');
+      const lines = report.originalFont + report.substituteFont + report.covered;
+      if (!lines) toast.success('Edited PDF downloaded.');
+      else {
+        const parts = [
+          report.originalFont && `${report.originalFont} in the PDF's own font`,
+          report.substituteFont && `${report.substituteFont} in a similar font (a character wasn't in the original font)`,
+          report.covered && `${report.covered} covered instead of deleted (that part of the PDF couldn't be edited safely)`,
+        ].filter(Boolean);
+        toast.success(`Edited PDF downloaded. ${lines} line${lines === 1 ? '' : 's'} changed: ${parts.join(', ')}.`, { duration: 8000 });
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : '';
       toast.error(/encrypt/i.test(msg)
@@ -300,7 +314,7 @@ export default function EditPdf() {
       eyebrowIcon={FilePenLine}
       title="Edit PDF"
       subtitle="Click any line to change its text, or add text, signatures, images, highlights and white-out — then download. No watermark, no sign-up."
-      note="Your PDF never leaves your browser. Text is edited one line at a time and doesn't re-flow paragraphs."
+      note="Old text is deleted and rewritten in the PDF's own font where possible. One line at a time; paragraphs don't re-flow. Your PDF never leaves your browser."
       accent={ACCENT}
       faqs={FAQS}
       maxWidth={1000}

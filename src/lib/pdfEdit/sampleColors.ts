@@ -64,3 +64,33 @@ export function hexToRgb(hex: string): RGB {
   const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
   return m ? [parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255] : [0, 0, 0];
 }
+
+/**
+ * Grows a text box vertically to cover the glyphs actually painted there.
+ * Font metrics often understate descenders (g, j, p, y), which then peek out
+ * below a cover patch. Starting at the box edge, rows are added while they
+ * contain ink, stopping at the first clean row so neighbouring lines are
+ * never swallowed. All values are canvas pixels.
+ */
+export function measureInkBand(
+  img: PixelData,
+  rect: { x: number; y: number; w: number; h: number },
+  bg: RGB,
+  maxGrow: number,
+): { top: number; bottom: number } {
+  const bg255 = bg.map(c => c * 255);
+  const x0 = Math.max(0, Math.floor(rect.x)), x1 = Math.min(img.width - 1, Math.ceil(rect.x + rect.w));
+  const rowHasInk = (y: number) => {
+    if (y < 0 || y >= img.height) return false;
+    for (let x = x0; x <= x1; x++) {
+      const i = (y * img.width + x) * 4;
+      if (img.data[i + 3] < 8) continue;
+      if (Math.hypot(img.data[i] - bg255[0], img.data[i + 1] - bg255[1], img.data[i + 2] - bg255[2]) > 80) return true;
+    }
+    return false;
+  };
+  let top = Math.floor(rect.y), bottom = Math.ceil(rect.y + rect.h);
+  for (let k = 0; k < maxGrow && rowHasInk(top - 1); k++) top--;
+  for (let k = 0; k < maxGrow && rowHasInk(bottom); k++) bottom++;
+  return { top, bottom };
+}

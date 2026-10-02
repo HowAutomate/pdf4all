@@ -1,6 +1,7 @@
 import { PDFDocument, PDFFont, rgb, degrees, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { standardFontFor, type FontMatch } from './fontMatch';
+import { readPageText, matchLine, buildRedraw, removeOps, type ShownText } from './rewriteText';
 
 export type RGB = [number, number, number]; // each 0..1
 
@@ -42,6 +43,17 @@ export interface ApplyOptions {
    * once per weight actually used.
    */
   loadUnicodeFont?: (weight: 'regular' | 'bold') => Promise<ArrayBuffer | Uint8Array>;
+  /** Filled in with how each replaced line was handled. */
+  report?: EditReport;
+}
+
+export interface EditReport {
+  /** Old text deleted, new text written in the PDF's own font. */
+  originalFont: number;
+  /** Old text deleted, new text in a substitute font (a character wasn't in the original font). */
+  substituteFont: number;
+  /** Old text couldn't be isolated, so it was covered rather than deleted. */
+  covered: number;
 }
 
 /** Extra cover around replaced text so anti-aliased edges of old glyphs don't peek out. */
@@ -76,13 +88,57 @@ export async function applyEdits(
     return uni;
   };
 
-  // Applied in the order given — the UI passes them in on-screen stacking
-  // order, so a white-out drawn after a highlight still hides it.
+  const report: EditReport = opts.report ?? { originalFont: 0, substituteFont: 0, covered: 0 };
+
+  // Pass 1 — true replacement. For each edited line, find the operators that
+  // drew it, delete them from the page and redraw the new text with the same
+  // font, size and position. Done for all lines of a page at once, before
+  // anything else is drawn on it.
+  const rewritten = new Set<Edit>();
+  const byPage = new Map<number, Extract<Edit, { kind: 'replace' }>[]>();
+  for (const e of edits) if (e.kind === 'replace') (byPage.get(e.page) ?? byPage.set(e.page, []).get(e.page)!).push(e);
+  for (const [pageIndex, lineEdits] of byPage) {
+    const page = pages[pageIndex];
+    if (!page) continue;
+    let pt;
+    try { pt = readPageText(page); } catch { pt = null; }
+    if (!pt) continue;
+    const toRemove: ShownText[] = [];
+    const redraws: (() => Promise<void>)[] = [];
+    for (const e of lineEdits) {
+      const ops = matchLine(pt, { x: e.x, y: e.y, width: e.width, fontSize: e.fontSize, text: e.text, color: e.color });
+      if (!ops || ops.some(o => toRemove.includes(o))) continue;
+      toRemove.push(...ops);
+      rewritten.add(e);
+      if (!e.text.trim()) { report.originalFont++; continue; }
+      const own = buildRedraw(ops, e.text, e.color, doc.context);
+      if (own) {
+        redraws.push(async () => { page.pushOperators(...own); });
+        report.originalFont++;
+      } else {
+        redraws.push(async () => {
+          const font = await fontFor(e.font, e.text);
+          page.drawText(e.text, { x: e.x, y: e.y, size: e.fontSize, font, color: rgb(...e.color) });
+        });
+        report.substituteFont++;
+      }
+    }
+    if (toRemove.length) {
+      removeOps(doc, page, pt, toRemove.map(s => s.op));
+      for (const r of redraws) await r();
+    }
+  }
+
+  // Pass 2 — everything else, in the order given (the UI passes on-screen
+  // stacking order, so a white-out drawn after a highlight still hides it).
   for (const edit of edits) {
     const page: PDFPage | undefined = pages[edit.page];
     if (!page) throw new Error(`Page ${edit.page + 1} does not exist`);
 
     if (edit.kind === 'replace') {
+      if (rewritten.has(edit)) continue;
+      // Fallback: cover the old glyphs and draw the new text on top.
+      report.covered++;
       page.drawRectangle({
         x: edit.x - COVER_PAD,
         y: edit.y - edit.descent - COVER_PAD,
