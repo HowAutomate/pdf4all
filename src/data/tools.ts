@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator,
+  Home, Wallet, Calculator, FilePenLine,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -69,6 +69,13 @@ export const TOOLS: Tool[] = [
     icon: Wallet, path: '/salary-slip-generator', category: 'Business',
     from: '#0d9488', to: '#2dd4bf', glow: 'rgba(13,148,136,0.45)', badge: 'New',
     keywords: 'payslip pay slip salary slip format payroll pf employee',
+  },
+  {
+    title: 'Edit PDF',
+    desc: 'Click to edit existing text, or add text, signatures, images, highlights and white-out.',
+    icon: FilePenLine, path: '/edit-pdf', category: 'PDF',
+    from: '#7c3aed', to: '#2563eb', glow: 'rgba(124,58,237,0.45)', badge: 'New',
+    keywords: 'pdf editor edit text change text sign signature fill whiteout annotate modify',
   },
   {
     title: 'Merge PDF',

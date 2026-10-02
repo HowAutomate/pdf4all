@@ -17,6 +17,7 @@ const WordCounter = lazy(() => import("./pages/WordCounter"));
 const JsonToTypescript = lazy(() => import("./pages/JsonToTypescript"));
 const PdfCompressor = lazy(() => import("./pages/PdfCompressor"));
 const MergePdf = lazy(() => import("./pages/MergePdf"));
+const EditPdf = lazy(() => import("./pages/EditPdf"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
 const GstCalculator = lazy(() => import("./pages/GstCalculator"));
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/json-to-typescript-zod" element={<JsonToTypescript />} />
             <Route path="/pdf-compressor" element={<PdfCompressor />} />
             <Route path="/merge-pdf" element={<MergePdf />} />
+            <Route path="/edit-pdf" element={<EditPdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
             <Route path="/gst-invoice-generator" element={<GstInvoiceGenerator />} />
             <Route path="/gst-calculator" element={<GstCalculator />} />
