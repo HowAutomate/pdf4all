@@ -115,6 +115,8 @@ export function PageView(props: Props) {
   };
 
   const startEditRun = (r: RunInfo) => {
+    // Finish any line still being edited (commits it) before opening this one.
+    (document.activeElement as HTMLElement | null)?.blur?.();
     const key = runKey(index, r.id);
     if (!runEdits[key]) {
       const canvas = canvasRef.current;
@@ -138,18 +140,23 @@ export function PageView(props: Props) {
   // Background layer: deselect, place text/images, draw rectangles.
   const onBgDown = (e: React.PointerEvent<HTMLDivElement>) => {
     const p = local(e);
-    if (pending && (tool === 'sign' || tool === 'image')) { onPlacePending(index, p.x, p.y); return; }
-    if (tool === 'text') {
-      const fontSize = 12;
-      onAdd({ page: index, kind: 'text', x: p.x, y: p.y - fontSize * 0.6, w: 0, h: fontSize * LINE_HEIGHT, text: '', fontSize, family: 'sans', color: '#000000' });
-      return;
-    }
+    // Placing things happens on click (onBgClick) so focus has settled first.
+    if (tool === 'text' || (pending && (tool === 'sign' || tool === 'image'))) return;
     if (tool === 'whiteout' || tool === 'highlight') {
       try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* not an active pointer */ }
       setDraft({ x0: p.x, y0: p.y, x1: p.x, y1: p.y });
       return;
     }
     onSelect(null);
+  };
+  const onBgClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = wrapRef.current!.getBoundingClientRect();
+    const p = { x: (e.clientX - r.left) / scale, y: (e.clientY - r.top) / scale };
+    if (pending && (tool === 'sign' || tool === 'image')) { onPlacePending(index, p.x, p.y); return; }
+    if (tool === 'text') {
+      const fontSize = 12;
+      onAdd({ page: index, kind: 'text', x: p.x, y: p.y - fontSize * 0.6, w: 0, h: fontSize * LINE_HEIGHT, text: '', fontSize, family: 'sans', color: '#000000' });
+    }
   };
   const onBgMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const d = draftRef.current;
@@ -182,7 +189,7 @@ export function PageView(props: Props) {
       <div
         className="absolute inset-0"
         style={{ cursor, touchAction: tool === 'whiteout' || tool === 'highlight' ? 'none' : 'auto' }}
-        onPointerDown={onBgDown} onPointerMove={onBgMove} onPointerUp={onBgUp}
+        onPointerDown={onBgDown} onPointerMove={onBgMove} onPointerUp={onBgUp} onClick={onBgClick}
       />
 
       {/* Existing text */}
@@ -215,7 +222,10 @@ export function PageView(props: Props) {
             className={tool === 'edit' ? 'absolute rounded-sm hover:outline hover:outline-2 hover:outline-blue-500/70 hover:bg-blue-500/10 cursor-text' : 'absolute'}
             style={{ ...rect, pointerEvents: tool === 'edit' ? 'auto' : 'none' }}
             title={tool === 'edit' ? 'Click to edit' : undefined}
-            onPointerDown={e => { e.stopPropagation(); if (tool === 'edit') startEditRun(r); }}
+            onPointerDown={e => e.stopPropagation()}
+            // Opened on click, not pointerdown: the browser moves focus during
+            // mousedown, which would instantly blur (and close) a just-opened editor.
+            onClick={e => { e.stopPropagation(); if (tool === 'edit') startEditRun(r); }}
           />
         );
       })}
@@ -279,7 +289,11 @@ function RunEditor({ rect, edit, style, editing, interactive, onStart, onChange,
           color: rgbToCss(edit.color), background: rgbToCss(edit.background), pointerEvents: interactive ? 'auto' : 'none',
           zIndex: editing ? 20 : 2,
         }}
-        onPointerDown={e => { e.stopPropagation(); if (!editing && interactive) onStart(); }}
+        onPointerDown={e => e.stopPropagation()}
+        onClick={e => {
+          e.stopPropagation();
+          if (!editing && interactive) { (document.activeElement as HTMLElement | null)?.blur?.(); onStart(); }
+        }}
         // Saved on every keystroke, so Download is correct even mid-edit.
         onInput={e => onChange((e.currentTarget.textContent ?? '').replace(/\n/g, ' '))}
         onBlur={e => onCommit((e.currentTarget.textContent ?? '').replace(/\n/g, ' '))}
