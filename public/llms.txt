@@ -6,6 +6,9 @@
 ## Business & GST
 
 - [GST Invoice Generator](https://tools.howautomate.com/gst-invoice-generator): Create a GST-compliant Indian tax invoice with automatic CGST/SGST vs IGST split, HSN/SAC codes, amount in words, optional bank details, optional round-off, and print/save as PDF.
+- [GST Calculator](https://tools.howautomate.com/gst-calculator): Add GST to a price or remove GST from a GST-inclusive amount, with the CGST/SGST (same state) or IGST (other state) split. Covers 0.25%, 3%, 5%, 12%, 18%, 28%, 40% and custom rates.
+- [Rent Receipt Generator](https://tools.howautomate.com/rent-receipt-generator): Generate one rent receipt per month for a period (e.g. a full financial year) for an HRA claim. Warns when annual rent exceeds ₹1,00,000 (landlord PAN needed) and adds a revenue-stamp box for cash payments above ₹5,000. Prints two receipts per A4 page.
+- [Salary Slip Generator](https://tools.howautomate.com/salary-slip-generator): Create a standard Indian monthly payslip with editable earnings and deductions, one-click EPF (12% of Basic, ₹15,000 wage ceiling), paid/LOP days and net pay in words. Prints to PDF.
 
 ## PDF Tools
 

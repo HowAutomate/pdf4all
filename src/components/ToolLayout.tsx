@@ -60,7 +60,7 @@ export const ToolLayout = ({
     <div style={{ minHeight: '100vh', background: '#07040f', color: '#fff', fontFamily: "'Inter','system-ui',sans-serif", display: 'flex', flexDirection: 'column' }}>
       <SEO title={seoTitle} description={seoDescription} path={path} jsonLd={jsonLd} />
 
-      <header style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(7,4,15,0.92)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+      <header className="print:hidden" style={{ position: 'sticky', top: 0, zIndex: 20, background: 'rgba(7,4,15,0.92)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
             <img src={logo} alt="HowAutomate Tools" style={{ height: 52, width: 'auto' }} />
@@ -76,7 +76,7 @@ export const ToolLayout = ({
         </div>
       </header>
 
-      <section style={{ position: 'relative', overflow: 'hidden', padding: '60px 24px 44px', textAlign: 'center' }}>
+      <section className="print:hidden" style={{ position: 'relative', overflow: 'hidden', padding: '60px 24px 44px', textAlign: 'center' }}>
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           <div style={{ position: 'absolute', top: '-10%', left: '20%', width: 480, height: 480, borderRadius: '50%', background: `radial-gradient(circle, ${accent.soft} 0%, transparent 65%)` }} />
           <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px)', backgroundSize: '56px 56px' }} />
@@ -91,11 +91,11 @@ export const ToolLayout = ({
         </div>
       </section>
 
-      <main style={{ maxWidth, margin: '0 auto', padding: '0 20px 72px', width: '100%', boxSizing: 'border-box', flex: 1 }}>
+      <main className="print:!p-0 print:!max-w-none" style={{ maxWidth, margin: '0 auto', padding: '0 20px 72px', width: '100%', boxSizing: 'border-box', flex: 1 }}>
         {children}
 
         {!!faqs?.length && (
-          <section style={{ marginTop: 48 }}>
+          <section className="print:hidden" style={{ marginTop: 48 }}>
             <h2 style={{ fontSize: 20, fontWeight: 800, color: '#fff', marginBottom: 20 }}>Frequently asked questions</h2>
             {faqs.map(({ q, a }) => (
               <details key={q} style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', padding: '16px 0', cursor: 'pointer' }}>
@@ -109,7 +109,7 @@ export const ToolLayout = ({
         )}
       </main>
 
-      <footer style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '24px 24px', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
+      <footer className="print:hidden" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '24px 24px', textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.2)' }}>
         Free tools by{' '}
         <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" style={{ color: accent.to, textDecoration: 'none' }}>HowAutomate</a>
         &nbsp;&middot;&nbsp; Your files never leave your browser

@@ -1,6 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
+  Home, Wallet, Calculator,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -17,7 +18,7 @@ export interface Category {
 
 /** Display order on the home page: money-making tools first, novelties last. */
 export const CATEGORIES: Category[] = [
-  { id: 'Business',  label: 'Business & GST',   desc: 'Invoices and compliance paperwork for Indian businesses.', icon: Briefcase, accent: '#2563eb' },
+  { id: 'Business',  label: 'Business & GST',   desc: 'Invoices, payslips, rent receipts and GST maths for Indian businesses.', icon: Briefcase, accent: '#2563eb' },
   { id: 'PDF',       label: 'PDF Tools',        desc: 'Merge, split, compress and convert — all inside your browser.', icon: FileText,  accent: '#7c3aed' },
   { id: 'Developer', label: 'Developer',        desc: 'Everyday helpers for people who write code.', icon: Terminal,  accent: '#0ea5e9' },
   { id: 'Marketing', label: 'Marketing',        desc: 'Create content and creatives for campaigns.', icon: Megaphone, accent: '#059669' },
@@ -47,6 +48,27 @@ export const TOOLS: Tool[] = [
     icon: Receipt, path: '/gst-invoice-generator', category: 'Business',
     from: '#2563eb', to: '#0ea5e9', glow: 'rgba(37,99,235,0.45)', badge: 'Popular',
     keywords: 'tax bill billing gstin hsn sac invoice india',
+  },
+  {
+    title: 'GST Calculator',
+    desc: 'Add GST to a price or remove it from an inclusive amount, with the CGST/SGST or IGST split.',
+    icon: Calculator, path: '/gst-calculator', category: 'Business',
+    from: '#ea580c', to: '#f59e0b', glow: 'rgba(234,88,12,0.45)', badge: 'New',
+    keywords: 'gst inclusive exclusive reverse calculate tax cgst sgst igst 18% 5%',
+  },
+  {
+    title: 'Rent Receipt Generator',
+    desc: 'Monthly rent receipts for your HRA claim, with the landlord-PAN check and a revenue-stamp box.',
+    icon: Home, path: '/rent-receipt-generator', category: 'Business',
+    from: '#2563eb', to: '#60a5fa', glow: 'rgba(37,99,235,0.45)', badge: 'New',
+    keywords: 'hra rent receipt house rent allowance landlord pan tax proof',
+  },
+  {
+    title: 'Salary Slip Generator',
+    desc: 'A standard Indian payslip with earnings, PF, professional tax, paid days and net pay in words.',
+    icon: Wallet, path: '/salary-slip-generator', category: 'Business',
+    from: '#0d9488', to: '#2dd4bf', glow: 'rgba(13,148,136,0.45)', badge: 'New',
+    keywords: 'payslip pay slip salary slip format payroll pf employee',
   },
   {
     title: 'Merge PDF',

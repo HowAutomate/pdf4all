@@ -19,6 +19,9 @@ const PdfCompressor = lazy(() => import("./pages/PdfCompressor"));
 const MergePdf = lazy(() => import("./pages/MergePdf"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
+const GstCalculator = lazy(() => import("./pages/GstCalculator"));
+const RentReceiptGenerator = lazy(() => import("./pages/RentReceiptGenerator"));
+const SalarySlipGenerator = lazy(() => import("./pages/SalarySlipGenerator"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -47,6 +50,9 @@ const App = () => (
             <Route path="/merge-pdf" element={<MergePdf />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
             <Route path="/gst-invoice-generator" element={<GstInvoiceGenerator />} />
+            <Route path="/gst-calculator" element={<GstCalculator />} />
+            <Route path="/rent-receipt-generator" element={<RentReceiptGenerator />} />
+            <Route path="/salary-slip-generator" element={<SalarySlipGenerator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

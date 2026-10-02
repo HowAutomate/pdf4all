@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { amountInWords, inr } from '@/lib/money';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
@@ -21,7 +22,9 @@ const INDIAN_STATES = [
   'Lakshadweep', 'Puducherry',
 ];
 
-const GST_RATES = [0, 5, 12, 18, 28];
+// 5% and 18% are the main slabs since GST 2.0 (22 Sep 2025); 40% is the
+// luxury/sin slab, 3% is gold/silver. 12% and 28% kept for older invoices.
+const GST_RATES = [0, 3, 5, 12, 18, 28, 40];
 
 interface LineItem {
   id: number;
@@ -34,42 +37,6 @@ interface LineItem {
 
 let nextId = 1;
 const newItem = (): LineItem => ({ id: nextId++, description: '', hsn: '', qty: 1, rate: 0, gstRate: 18 });
-
-const ONES = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-  'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-const TENS = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-
-function twoDigits(n: number): string {
-  if (n < 20) return ONES[n];
-  return `${TENS[Math.floor(n / 10)]}${n % 10 ? ' ' + ONES[n % 10] : ''}`;
-}
-function threeDigits(n: number): string {
-  if (n < 100) return twoDigits(n);
-  const rest = n % 100;
-  return `${ONES[Math.floor(n / 100)]} Hundred${rest ? ' ' + twoDigits(rest) : ''}`;
-}
-function numberToIndianWords(n: number): string {
-  if (n === 0) return 'Zero';
-  const crore = Math.floor(n / 10000000); n %= 10000000;
-  const lakh = Math.floor(n / 100000); n %= 100000;
-  const thousand = Math.floor(n / 1000); n %= 1000;
-  const rest = n;
-  const parts: string[] = [];
-  if (crore) parts.push(`${threeDigits(crore)} Crore`);
-  if (lakh) parts.push(`${threeDigits(lakh)} Lakh`);
-  if (thousand) parts.push(`${threeDigits(thousand)} Thousand`);
-  if (rest) parts.push(threeDigits(rest));
-  return parts.join(' ');
-}
-function amountInWords(amount: number): string {
-  const rupees = Math.floor(amount);
-  const paise = Math.round((amount - rupees) * 100);
-  let words = `${numberToIndianWords(rupees)} Rupees`;
-  if (paise) words += ` and ${numberToIndianWords(paise)} Paise`;
-  return `${words} Only`;
-}
-
-const inr = (n: number) => n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const GstInvoiceGenerator = () => {
   const [seller, setSeller] = useState({ name: '', address: '', gstin: '', state: '', phone: '', email: '' });
