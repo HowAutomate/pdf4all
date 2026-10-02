@@ -107,6 +107,15 @@ export function staticPages(): Plugin {
         fs.writeFileSync(path.join(outDir, file), renderPage(template, route, meta));
       }
       fs.writeFileSync(path.join(outDir, 'sitemap.xml'), sitemap(new Date().toISOString().slice(0, 10)));
+      // Unknown URLs get a real 404 status (Vercel serves 404.html); the app
+      // still loads and shows its own "not found" page with links to the tools.
+      fs.writeFileSync(path.join(outDir, '404.html'), renderPage(template, '/404', {
+        title: 'Page not found — HowAutomate Tools',
+        description: 'This page does not exist. Browse the free tools on tools.howautomate.com.',
+        h1: 'Page not found',
+        intro: 'The page you were looking for does not exist. All free tools are listed below.',
+        noindex: true,
+      }).replace(/\s*<link rel="canonical"[^>]*>/, ''));
     },
   };
 }
