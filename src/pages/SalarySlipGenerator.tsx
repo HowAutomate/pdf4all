@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { amountInWords, inr, round2 } from '@/lib/money';
 import { printAs } from '@/lib/print';
+import { SALARY_SLIP_FAQS as FAQS } from '@/data/faqs';
 
 const ACCENT = { from: '#0d9488', to: '#5eead4', soft: 'rgba(13,148,136,0.18)' };
 
@@ -36,29 +37,6 @@ function lastMonth() {
   d.setMonth(d.getMonth() - 1);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 }
-
-const FAQS = [
-  {
-    q: 'Is a salary slip from this tool valid?',
-    a: 'A salary slip is valid when it is issued by the employer with correct figures — the format itself is not prescribed by law. This tool gives you a clean, standard layout; the employer is responsible for the numbers and for signing or stamping it if the recipient (a bank, a visa office) asks for that.',
-  },
-  {
-    q: 'How is PF calculated?',
-    a: 'Employee EPF is 12% of Basic (plus DA). Many employers cap it at the ₹15,000 statutory wage ceiling, which makes the maximum ₹1,800 a month. The "Fill PF" button uses the capped method; type a different figure if your company contributes on the full Basic.',
-  },
-  {
-    q: 'What about Professional Tax and TDS?',
-    a: 'Professional Tax depends on your state (e.g. ₹200 a month in Maharashtra and Karnataka, nil in Rajasthan and Delhi), and TDS depends on the employee\'s full-year income and chosen regime. Enter the figures your payroll calculated — this tool doesn\'t guess them.',
-  },
-  {
-    q: 'Can I make slips for several months or employees?',
-    a: 'Change the month or the employee details and print again — each print is a separate PDF. If you are doing this every month for a team, that is the point where payroll automation pays for itself.',
-  },
-  {
-    q: 'Is employee data uploaded anywhere?',
-    a: 'No. PAN, bank and salary details stay in your browser and are never sent to a server.',
-  },
-];
 
 export default function SalarySlipGenerator() {
   const [company, setCompany] = useState({ name: '', address: '' });

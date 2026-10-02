@@ -4,34 +4,12 @@ import { Link } from 'react-router-dom';
 import { ToolLayout } from '@/components/ToolLayout';
 import { calculateGst, type GstMode } from '@/lib/gst';
 import { amountInWords, inr } from '@/lib/money';
+import { GST_CALCULATOR_FAQS as FAQS } from '@/data/faqs';
 
 const ACCENT = { from: '#ea580c', to: '#fdba74', soft: 'rgba(234,88,12,0.18)' };
 
 /** Most goods and services sit at 5% or 18% since GST 2.0 (22 Sep 2025). */
 const RATES = [0.25, 3, 5, 12, 18, 28, 40];
-
-const FAQS = [
-  {
-    q: 'How do I add GST to a price?',
-    a: 'Multiply the price by the rate and add it: ₹1,000 at 18% → GST ₹180, total ₹1,180. Choose "Add GST" above.',
-  },
-  {
-    q: 'How do I remove GST from a GST-inclusive price?',
-    a: 'Divide by (100 + rate) and multiply by 100: ₹1,180 inclusive of 18% → ₹1,180 × 100 ÷ 118 = ₹1,000 taxable value, GST ₹180. Don\'t just take 18% off the total — that gives ₹967.60, which is wrong. Choose "Remove GST" above.',
-  },
-  {
-    q: 'When is it CGST + SGST and when is it IGST?',
-    a: 'If the seller and the place of supply are in the same state, the GST is split equally into CGST and SGST (18% = 9% + 9%). If they are in different states, the whole amount is IGST. The total tax is the same either way.',
-  },
-  {
-    q: 'What are the GST rates now?',
-    a: 'Since the GST 2.0 rate rationalisation took effect on 22 September 2025, most items fall in two main slabs, 5% and 18%, with a 40% slab for luxury and sin goods. Special rates such as 3% (gold, silver) and 0.25% (rough diamonds) continue. Always check the current rate notified for your HSN/SAC code.',
-  },
-  {
-    q: 'Can I turn this into an invoice?',
-    a: 'Yes — use the free GST Invoice Generator, which applies the same maths per line item and adds HSN codes, GSTINs and amount in words.',
-  },
-];
 
 export default function GstCalculator() {
   const [amount, setAmount] = useState<number | ''>(1000);

@@ -18,6 +18,7 @@ import {
 import { SignaturePad } from '@/components/pdfEdit/SignaturePad';
 import type { Edit, EditReport } from '@/lib/pdfEdit/applyEdits';
 import { hexToRgb } from '@/lib/pdfEdit/sampleColors';
+import { EDIT_PDF_FAQS as FAQS } from '@/data/faqs';
 
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 
@@ -32,33 +33,6 @@ const TOOLS: { id: Tool; label: string; icon: typeof Type; hint: string }[] = [
   { id: 'highlight', label: 'Highlight', icon: Highlighter, hint: 'Drag a box over text to highlight it.' },
   { id: 'sign', label: 'Sign', icon: PenLine, hint: 'Draw or type your signature, then click where it goes.' },
   { id: 'image', label: 'Image', icon: ImagePlus, hint: 'Pick an image (logo, stamp, photo), then click where it goes.' },
-];
-
-const FAQS = [
-  {
-    q: 'Can I edit the existing text in my PDF?',
-    a: 'Yes. Choose "Edit text" and click any line — it becomes editable in place. Edits work one line at a time: if your new text is longer, it extends to the right rather than re-flowing the paragraph, which is how most free PDF editors behave.',
-  },
-  {
-    q: 'Does the edited text keep the original font?',
-    a: 'Yes, whenever the PDF\'s own font contains every character you typed: the old text is deleted and your new text is written with the same font, size, spacing and colour. PDFs usually embed only the letters they use, so if you type a character the document never used, that line is written in the closest standard font instead. The text in the on-screen edit box is only a preview — the downloaded file uses the real font.',
-  },
-  {
-    q: 'Is the original text deleted?',
-    a: 'Yes, in most PDFs: the old text is removed from the file, not just hidden, so it can\'t be copied or extracted afterwards. For a few layouts (unusual fonts, text inside embedded graphics, some letter-spaced headings) a line can\'t be cut out safely; those lines are covered with a patch matching the background instead, and the message after downloading tells you how many. If you are removing confidential information, check that message says nothing was covered.',
-  },
-  {
-    q: 'Can I sign a PDF with this?',
-    a: 'Yes. Choose "Sign", draw your signature with a mouse or finger (or type it), then click where it should go. You can drag and resize it before downloading. This adds a visual signature, not a certificate-based digital signature (DSC).',
-  },
-  {
-    q: 'Is my PDF uploaded to a server?',
-    a: 'No. The PDF is opened, edited and saved entirely in your browser. Unlike most online PDF editors, nothing is sent to a server, so it is safe for invoices, bank statements and other private documents.',
-  },
-  {
-    q: 'Why can\'t I click the text in my scanned PDF?',
-    a: 'A scanned PDF is a picture of a page, with no real text inside. You can still use White-out, Add text, Highlight, Sign and Image on it.',
-  },
 ];
 
 let objSeq = 1;

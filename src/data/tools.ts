@@ -1,11 +1,11 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine,
   type LucideIcon,
 } from 'lucide-react';
 
-export type CategoryId = 'Business' | 'PDF' | 'Developer' | 'Marketing' | 'Utilities' | 'Health';
+export type CategoryId = 'Business' | 'PDF' | 'Image' | 'Developer' | 'Marketing' | 'Utilities' | 'Health';
 
 export interface Category {
   id: CategoryId;
@@ -20,6 +20,7 @@ export interface Category {
 export const CATEGORIES: Category[] = [
   { id: 'Business',  label: 'Business & GST',   desc: 'Invoices, payslips, rent receipts and GST maths for Indian businesses.', icon: Briefcase, accent: '#2563eb' },
   { id: 'PDF',       label: 'PDF Tools',        desc: 'Merge, split, compress and convert — all inside your browser.', icon: FileText,  accent: '#7c3aed' },
+  { id: 'Image',     label: 'Photo & Image',    desc: 'Resize photos and signatures to the exact KB size forms ask for.', icon: Minimize2, accent: '#16a34a' },
   { id: 'Developer', label: 'Developer',        desc: 'Everyday helpers for people who write code.', icon: Terminal,  accent: '#0ea5e9' },
   { id: 'Marketing', label: 'Marketing',        desc: 'Create content and creatives for campaigns.', icon: Megaphone, accent: '#059669' },
   { id: 'Utilities', label: 'Everyday Utilities', desc: 'Small tools that save a search and a download.', icon: Wrench, accent: '#16a34a' },
@@ -76,6 +77,20 @@ export const TOOLS: Tool[] = [
     icon: FilePenLine, path: '/edit-pdf', category: 'PDF',
     from: '#7c3aed', to: '#2563eb', glow: 'rgba(124,58,237,0.45)', badge: 'New',
     keywords: 'pdf editor edit text change text sign signature fill whiteout annotate modify',
+  },
+  {
+    title: 'Photo Resizer in KB',
+    desc: 'Resize a photo to an exact KB size (10, 20, 50, 100 KB…) and pixel size for exam and job forms.',
+    icon: Minimize2, path: '/photo-resizer-in-kb', category: 'Image',
+    from: '#16a34a', to: '#22c55e', glow: 'rgba(22,163,74,0.45)', badge: 'New',
+    keywords: 'resize image kb 20kb 50kb 100kb compress photo size exam form passport reduce',
+  },
+  {
+    title: 'Signature Resizer',
+    desc: 'Clean up a signature photo and resize it to 10–20 KB for online application forms.',
+    icon: PenLine, path: '/signature-resizer', category: 'Image',
+    from: '#0d9488', to: '#2dd4bf', glow: 'rgba(13,148,136,0.45)', badge: 'New',
+    keywords: 'signature resize kb exam form ssc upsc ibps sign photo',
   },
   {
     title: 'Merge PDF',

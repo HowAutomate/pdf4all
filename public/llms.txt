@@ -18,6 +18,11 @@
 - [PDF Compressor](https://tools.howautomate.com/pdf-compressor): Reduce PDF file size by removing metadata and optimising internal structure.
 - [File to PDF](https://tools.howautomate.com/pdf-converter): Convert documents, images and spreadsheets to properly formatted PDFs.
 
+## Photo & Image
+
+- [Photo Resizer in KB](https://tools.howautomate.com/photo-resizer-in-kb): Resize a photo to an exact maximum (and optional minimum) size in KB, optionally at exact pixel dimensions, for exam, job and government application forms. Finds the highest JPG quality that fits; runs in the browser, nothing uploaded. Preset pages: [10 KB](https://tools.howautomate.com/resize-image-to-10kb), [20 KB](https://tools.howautomate.com/resize-image-to-20kb), [50 KB](https://tools.howautomate.com/resize-image-to-50kb), [100 KB](https://tools.howautomate.com/resize-image-to-100kb), [200 KB](https://tools.howautomate.com/resize-image-to-200kb).
+- [Signature Resizer](https://tools.howautomate.com/signature-resizer): Turn a phone photo of a signature into a clean JPG for application forms: whitens paper and shadows, darkens ink, crops to the signature and compresses to a KB range (10–20 KB by default).
+
 ## Developer
 
 - [JSON to TypeScript & Zod](https://tools.howautomate.com/json-to-typescript-zod): Turn a JSON sample into TypeScript interfaces, Zod schemas or JSON Schema.

@@ -6,6 +6,7 @@ import JSZip from 'jszip';
 import { ToolLayout } from '@/components/ToolLayout';
 import { parsePageRanges } from '@/lib/pageRanges';
 import { Button } from '@/components/ui/button';
+import { SPLIT_PDF_FAQS } from '@/data/faqs';
 
 const ACCENT = { from: '#e11d48', to: '#fb7185', soft: 'rgba(225,29,72,0.16)' };
 const MAX_SIZE = 100 * 1024 * 1024;
@@ -145,14 +146,7 @@ export default function SplitPdf() {
       subtitle="Pull out the pages you need, or break one PDF into many — in seconds."
       note="Everything runs in your browser. Your document is never uploaded to a server."
       accent={ACCENT}
-      faqs={[
-        { q: 'How do I extract just a few pages?', a: 'Choose "Extract pages" and type the pages you want, for example 1-3, 7, 10-12. You get a single PDF containing those pages in the order you listed them, and duplicates are ignored.' },
-        { q: 'Why do I get a ZIP file?', a: 'When a split produces more than one PDF, browsers block downloading many files at once. Packing them into a single ZIP is the reliable way — open it with the built-in unzip tool on Windows, Mac, Android, or iOS.' },
-        { q: 'What does "Split every N pages" do?', a: 'It cuts the document into equal chunks. With N set to 10, a 95-page PDF becomes ten files: nine of 10 pages and one final file with the remaining 5.' },
-        { q: 'Are my files uploaded anywhere?', a: 'No. The split happens entirely inside your browser using pdf-lib. No server receives, stores, or sees your document.' },
-        { q: 'Does the output have a watermark?', a: 'No. Each output PDF contains exactly the pages you selected, with nothing added.' },
-        { q: 'It says my PDF cannot be read — why?', a: 'The file is almost certainly password-protected. Open it in a PDF reader, enter the password, save an unprotected copy, and split that copy instead.' },
-      ]}
+      faqs={SPLIT_PDF_FAQS}
     >
       {/* Drop zone */}
       {!file && (

@@ -10,6 +10,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { amountInWords, inr } from '@/lib/money';
 import { monthsBetween, formatDate, PAN_THRESHOLD_ANNUAL } from '@/lib/rentReceipt';
 import { printAs } from '@/lib/print';
+import { RENT_RECEIPT_FAQS as FAQS } from '@/data/faqs';
 
 const ACCENT = { from: '#2563eb', to: '#60a5fa', soft: 'rgba(37,99,235,0.18)' };
 const PAYMENT_MODES = ['Cash', 'UPI', 'Bank Transfer', 'Cheque'];
@@ -22,29 +23,6 @@ function currentFinancialYear() {
   const startYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
   return { from: `${startYear}-04`, to: `${startYear + 1}-03` };
 }
-
-const FAQS = [
-  {
-    q: 'Do I need rent receipts to claim HRA?',
-    a: 'Most employers ask for rent receipts as proof before they reduce TDS for HRA, usually in the January–March proof-submission window. HRA exemption is only available under the old tax regime — the new regime does not allow it.',
-  },
-  {
-    q: 'When is the landlord\'s PAN mandatory?',
-    a: 'If the rent you pay is more than ₹1,00,000 in the financial year (about ₹8,333 a month), your employer needs the landlord\'s PAN. If the landlord has no PAN, a signed declaration from them is usually accepted instead. This tool warns you when your total crosses the limit.',
-  },
-  {
-    q: 'Do rent receipts need a revenue stamp?',
-    a: 'A ₹1 revenue stamp is customarily affixed to receipts for cash payments above ₹5,000. Payments by UPI, bank transfer or cheque leave their own trail, so most employers don\'t ask for one. When you pick Cash with rent above ₹5,000, the receipt gets a marked box for the stamp.',
-  },
-  {
-    q: 'Does the landlord have to sign each receipt?',
-    a: 'Yes. Print the receipts and get each one signed by the landlord — an unsigned receipt is usually rejected. The tool prints two receipts per A4 page with a signature line on each.',
-  },
-  {
-    q: 'Is my data uploaded anywhere?',
-    a: 'No. Everything — names, PAN, address, amounts — stays in your browser. The receipts are produced by your browser\'s own print-to-PDF; nothing is sent to a server.',
-  },
-];
 
 export default function RentReceiptGenerator() {
   const fy = currentFinancialYear();

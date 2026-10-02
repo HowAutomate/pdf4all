@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-
-const SITE_URL = 'https://tools.howautomate.com';
+import { PAGES, SITE_URL } from '@/data/pages';
 
 /**
  * Marks every tag this component owns, so a route change can clean up exactly
@@ -28,11 +27,20 @@ type TagSpec =
  * dropped when a route component is code-split behind <Suspense>, which
  * silently stripped the title, canonical and JSON-LD from every tool page.
  */
-export const SEO = ({ title, description, path, jsonLd, noindex = false }: SEOProps) => {
+export const SEO = (props: SEOProps) => {
+  // The page registry wins, so the build-time HTML and the live page always
+  // carry the same title and description.
+  const meta = PAGES[props.path];
+  const title = meta?.title ?? props.title;
+  const description = meta?.description ?? props.description;
+  const noindex = meta?.noindex ?? props.noindex ?? false;
+  const { path, jsonLd } = props;
   const url = `${SITE_URL}${path}`;
   const jsonLdText = jsonLd ? JSON.stringify(jsonLd) : '';
 
   useEffect(() => {
+    // Structured data baked into the static HTML is replaced by this page's own.
+    document.head.querySelectorAll('script[data-prerender]').forEach(n => n.remove());
     const previousTitle = document.title;
     document.title = title;
 

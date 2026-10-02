@@ -4,9 +4,10 @@ import { toast } from 'sonner';
 import { PDFDocument } from 'pdf-lib';
 import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/button';
+import { MERGE_PDF_FAQS } from '@/data/faqs';
 
 const ACCENT = { from: '#7c3aed', to: '#a78bfa', soft: 'rgba(124,58,237,0.16)' };
-const MAX_FILES = 25;
+const MAX_FILES = 25; // also stated in MERGE_PDF_FAQS (src/data/faqs.ts)
 const MAX_TOTAL = 100 * 1024 * 1024;
 
 interface Entry {
@@ -117,14 +118,7 @@ export default function MergePdf() {
       subtitle="Combine several PDFs into a single file — reorder them first, then download."
       note="Everything runs in your browser. Your documents are never uploaded to a server."
       accent={ACCENT}
-      faqs={[
-        { q: 'How many PDFs can I merge at once?', a: `Up to ${MAX_FILES} files, with a combined size of 100 MB. There is no limit on how many times you can use the tool.` },
-        { q: 'Can I change the order of the files?', a: 'Yes. Each file in the list has up and down arrows. The merged PDF follows the order shown on screen, top to bottom, and the running page count tells you how long the result will be.' },
-        { q: 'Are my files uploaded anywhere?', a: 'No. The merge happens entirely inside your browser using pdf-lib, a JavaScript library. No server receives, stores, or sees your documents.' },
-        { q: 'Does the merged PDF have a watermark?', a: 'No. The output is a clean PDF containing exactly the pages of your source files, with no branding added.' },
-        { q: 'Why does one of my files say it is unreadable?', a: 'That usually means the PDF is password-protected. Open it in a PDF reader, enter the password, save an unprotected copy, and merge that copy instead.' },
-        { q: 'Are bookmarks and form fields kept?', a: 'Page content, text, and images are copied exactly. Document-level extras such as bookmarks, form fields, and attachments are not carried across — this is a page merger, not a full PDF editor.' },
-      ]}
+      faqs={MERGE_PDF_FAQS}
     >
       {/* Drop zone */}
       <div
