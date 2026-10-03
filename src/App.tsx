@@ -20,6 +20,7 @@ const MergePdf = lazy(() => import("./pages/MergePdf"));
 const EditPdf = lazy(() => import("./pages/EditPdf"));
 const ImageToKb = lazy(() => import("./pages/ImageToKb"));
 const ImagesToPdf = lazy(() => import("./pages/ImagesToPdf"));
+const ImageConverter = lazy(() => import("./pages/ImageConverter"));
 const PdfToImages = lazy(() => import("./pages/PdfToImages"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
@@ -71,6 +72,11 @@ const App = () => (
             <Route path="/resize-image-to-100kb" element={<ImageToKb />} />
             <Route path="/resize-image-to-200kb" element={<ImageToKb />} />
             <Route path="/signature-resizer" element={<ImageToKb />} />
+            <Route path="/compress-image" element={<ImageConverter />} />
+            <Route path="/webp-to-jpg" element={<ImageConverter />} />
+            <Route path="/png-to-jpg" element={<ImageConverter />} />
+            <Route path="/jpg-to-png" element={<ImageConverter />} />
+            <Route path="/jpg-to-webp" element={<ImageConverter />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
             <Route path="/gst-invoice-generator" element={<GstInvoiceGenerator />} />
             <Route path="/gst-calculator" element={<GstCalculator />} />

@@ -22,6 +22,8 @@
 
 ## Photo & Image
 
+- [Image Compressor](https://tools.howautomate.com/compress-image): Compress JPG, PNG and WebP in bulk (up to 50) with a quality slider; PNGs are palette-quantised (TinyPNG-style) and keep transparency; never returns a bigger file. In the browser.
+- Image converters: [WebP to JPG](https://tools.howautomate.com/webp-to-jpg), [PNG to JPG](https://tools.howautomate.com/png-to-jpg), [JPG to PNG](https://tools.howautomate.com/jpg-to-png), [JPG to WebP](https://tools.howautomate.com/jpg-to-webp) — bulk, ZIP download, phone rotation applied, in the browser.
 - [Photo Resizer in KB](https://tools.howautomate.com/photo-resizer-in-kb): Resize a photo to an exact maximum (and optional minimum) size in KB, optionally at exact pixel dimensions, for exam, job and government application forms. Finds the highest JPG quality that fits; runs in the browser, nothing uploaded. Preset pages: [10 KB](https://tools.howautomate.com/resize-image-to-10kb), [20 KB](https://tools.howautomate.com/resize-image-to-20kb), [50 KB](https://tools.howautomate.com/resize-image-to-50kb), [100 KB](https://tools.howautomate.com/resize-image-to-100kb), [200 KB](https://tools.howautomate.com/resize-image-to-200kb).
 - [Signature Resizer](https://tools.howautomate.com/signature-resizer): Turn a phone photo of a signature into a clean JPG for application forms: whitens paper and shadows, darkens ink, crops to the signature and compresses to a KB range (10–20 KB by default).
 

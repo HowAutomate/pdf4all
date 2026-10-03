@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -20,7 +20,7 @@ export interface Category {
 export const CATEGORIES: Category[] = [
   { id: 'Business',  label: 'Business & GST',   desc: 'Invoices, payslips, rent receipts and GST maths for Indian businesses.', icon: Briefcase, accent: '#2563eb' },
   { id: 'PDF',       label: 'PDF Tools',        desc: 'Merge, split, compress and convert — all inside your browser.', icon: FileText,  accent: '#7c3aed' },
-  { id: 'Image',     label: 'Photo & Image',    desc: 'Resize photos and signatures to the exact KB size forms ask for.', icon: Minimize2, accent: '#16a34a' },
+  { id: 'Image',     label: 'Photo & Image',    desc: 'Compress, convert and resize photos — including the exact KB sizes forms ask for.', icon: Minimize2, accent: '#16a34a' },
   { id: 'Developer', label: 'Developer',        desc: 'Everyday helpers for people who write code.', icon: Terminal,  accent: '#0ea5e9' },
   { id: 'Marketing', label: 'Marketing',        desc: 'Create content and creatives for campaigns.', icon: Megaphone, accent: '#059669' },
   { id: 'Utilities', label: 'Everyday Utilities', desc: 'Small tools that save a search and a download.', icon: Wrench, accent: '#16a34a' },
@@ -84,6 +84,20 @@ export const TOOLS: Tool[] = [
     icon: Minimize2, path: '/photo-resizer-in-kb', category: 'Image',
     from: '#16a34a', to: '#22c55e', glow: 'rgba(22,163,74,0.45)', badge: 'New',
     keywords: 'resize image kb 20kb 50kb 100kb compress photo size exam form passport reduce',
+  },
+  {
+    title: 'Image Compressor',
+    desc: 'Shrink JPG, PNG and WebP images in bulk with a quality slider — PNGs keep transparency.',
+    icon: ImageDown, path: '/compress-image', category: 'Image',
+    from: '#059669', to: '#34d399', glow: 'rgba(5,150,105,0.45)', badge: 'New',
+    keywords: 'compress image jpg compress reduce photo size tinypng optimize png',
+  },
+  {
+    title: 'Image Converter',
+    desc: 'Convert WebP to JPG, PNG to JPG, JPG to PNG or WebP — many images at once.',
+    icon: Repeat, path: '/webp-to-jpg', category: 'Image',
+    from: '#0891b2', to: '#22d3ee', glow: 'rgba(8,145,178,0.45)', badge: 'New',
+    keywords: 'webp to jpg png to jpg jpg to png convert image format jpeg webp',
   },
   {
     title: 'Signature Resizer',

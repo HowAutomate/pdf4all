@@ -19,6 +19,8 @@ export interface KbPreset {
   mode: 'photo' | 'signature';
 }
 
+export type ImageToolPreset = { mode: 'compress' } | { mode: 'convert'; to: 'jpg' | 'png' | 'webp' };
+
 export interface PageMeta {
   title: string;
   description: string;
@@ -32,6 +34,8 @@ export interface PageMeta {
   kb?: KbPreset;
   /** PDF compressor pages: open in "exact size" mode with this target. */
   pdfTargetKb?: number;
+  /** Image compressor / converter pages. */
+  image?: ImageToolPreset;
 }
 
 const KB_COMMON: Faq[] = [
@@ -58,6 +62,16 @@ const CONVERTER_FAQS: Faq[] = [
   { q: 'Are my files private?', a: 'Files are sent over an encrypted connection to our conversion server, converted, and removed once the conversion finishes. They are not shared or used for anything else.' },
   { q: 'Which formats are supported?', a: 'Word (DOC, DOCX, ODT, RTF), Excel (XLS, XLSX, CSV, ODS), PowerPoint (PPT, PPTX, ODP), images (JPG, PNG and more), HTML and text files, among 40+ formats.' },
 ];
+
+const IMAGE_TOOL_FAQS: Faq[] = [
+  { q: 'Are my images uploaded?', a: 'No. Images are compressed and converted inside your browser, on your device — nothing is sent to a server.' },
+  { q: 'Can I do many images at once?', a: 'Yes — add up to 50 images. Download them one by one or all together as a ZIP.' },
+  { q: 'Does it keep the photo the right way up?', a: 'Yes. The rotation your phone records in a photo is applied, so the output is upright.' },
+];
+
+const convertPage = (to: 'jpg' | 'png' | 'webp', h1: string, title: string, description: string, intro: string, faqs: Faq[]): PageMeta => ({
+  title, description, h1, intro, image: { mode: 'convert', to }, faqs: [...faqs, ...IMAGE_TOOL_FAQS],
+});
 
 const IMAGES_TO_PDF_FAQS: Faq[] = [
   { q: 'How do I combine several photos into one PDF?', a: 'Add all the images at once (or in batches), use the arrows to put them in order, and press Convert. Each image becomes one page.' },
@@ -165,6 +179,40 @@ export const PAGES: Record<string, PageMeta> = {
     'A 200 KB limit is common for admission, KYC and document-upload portals. At this size most photos keep full detail — the tool only reduces quality or dimensions as much as needed to fit.',
     [{ q: 'My image is already under 200 KB. Will it get worse?', a: 'It will be re-saved as a high-quality JPG at the same dimensions. If you only need the format changed to JPG, this is still the quickest way.' }],
   ),
+  '/compress-image': {
+    title: 'Image Compressor — Compress JPG, PNG & WebP Online Free | HowAutomate',
+    description: 'Reduce image file size free — compress JPG, PNG and WebP in bulk with a quality slider. PNGs keep transparency. Runs in your browser, nothing uploaded.',
+    h1: 'Image Compressor',
+    intro: 'Make photos and screenshots smaller for websites, email and WhatsApp. Add up to 50 images, choose the quality, and download them individually or as a ZIP. PNGs are shrunk the TinyPNG way — by reducing colours — so they stay PNG with transparency intact.',
+    image: { mode: 'compress' },
+    faqs: [
+      { q: 'How much smaller will my images get?', a: 'Phone photos usually shrink by 60–90% at the default 70% quality with no visible difference on screens. Screenshots and graphics saved as PNG typically shrink by 50–80%.' },
+      { q: 'What does the quality setting do?', a: 'Lower quality means a smaller file. Around 70% is a good balance; go to 85–90% for print or detailed images, or 40–50% when size matters most.' },
+      { q: 'What if an image is already well compressed?', a: 'You never get a bigger file: if compressing would not make an image smaller, the original is kept and marked "already optimised".' },
+      { q: 'I need a specific size like 50 KB.', a: 'Use the Photo Resizer in KB, which finds the best quality that fits an exact KB limit.' },
+      ...IMAGE_TOOL_FAQS,
+    ],
+  },
+  '/webp-to-jpg': convertPage('jpg', 'WebP to JPG Converter',
+    'WebP to JPG Converter Free — Convert WebP Images in Bulk | HowAutomate',
+    'Convert WebP images to JPG free, many at once, at the quality you choose. Works in your browser — nothing uploaded.',
+    'Images saved from websites often come as WebP, which many apps and upload portals reject. Convert them to JPG in one go — add up to 50 files and download a ZIP.',
+    [{ q: 'Why can’t I open or upload a WebP file?', a: 'WebP is a modern web format that some older apps, editors and government or bank portals do not accept. JPG works almost everywhere.' }]),
+  '/png-to-jpg': convertPage('jpg', 'PNG to JPG Converter',
+    'PNG to JPG Converter Free — Smaller Files, Bulk | HowAutomate',
+    'Convert PNG images and screenshots to JPG free — usually 5–10× smaller. Transparent areas become white. Bulk, in your browser.',
+    'PNG screenshots and photos are often several MB. As JPG they are usually 5–10 times smaller — ideal for email, forms and WhatsApp. Transparent areas become white.',
+    [{ q: 'What happens to transparent areas?', a: 'JPG cannot store transparency, so transparent parts become white. Keep the file as PNG (or use WebP) if you need transparency.' }]),
+  '/jpg-to-png': convertPage('png', 'JPG to PNG Converter',
+    'JPG to PNG Converter Free — Bulk, Lossless Output | HowAutomate',
+    'Convert JPG photos to PNG free, in bulk. Useful for editing, logos and apps that require PNG. Runs in your browser.',
+    'Some apps, editors and design tools ask for PNG. Convert JPG images to lossless PNG in bulk — the picture is kept exactly as it is.',
+    [{ q: 'Will converting to PNG improve quality?', a: 'No — it keeps the image exactly as it is, it cannot restore detail a JPG already lost. Expect the PNG file to be larger than the JPG.' }]),
+  '/jpg-to-webp': convertPage('webp', 'JPG to WebP Converter',
+    'JPG to WebP Converter Free — Faster Websites | HowAutomate',
+    'Convert JPG and PNG images to WebP free — typically 25–35% smaller than JPG at the same quality. Bulk, in your browser.',
+    'WebP images load faster on websites and online stores, typically 25–35% smaller than JPG at the same visual quality. Convert a whole folder of product photos at once.',
+    [{ q: 'Do all browsers support WebP?', a: 'Yes — every current browser displays WebP. Some older desktop apps and upload portals do not, so keep a JPG copy for those.' }]),
   '/signature-resizer': {
     title: 'Signature Resizer — Resize Signature to 10–20 KB for Forms | HowAutomate',
     description: 'Resize and clean up a scanned or photographed signature to 10–20 KB JPG for exam and job application forms. Whitens the paper background. Free, no upload.',
