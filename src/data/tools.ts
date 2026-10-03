@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -49,6 +49,20 @@ export const TOOLS: Tool[] = [
     icon: Receipt, path: '/gst-invoice-generator', category: 'Business',
     from: '#2563eb', to: '#0ea5e9', glow: 'rgba(37,99,235,0.45)', badge: 'Popular',
     keywords: 'tax bill billing gstin hsn sac invoice india',
+  },
+  {
+    title: 'Quotation Generator',
+    desc: 'A professional GST quotation with validity date, terms, logo and bank details — as PDF.',
+    icon: FileSignature, path: '/quotation-generator', category: 'Business',
+    from: '#7c3aed', to: '#a78bfa', glow: 'rgba(124,58,237,0.45)', badge: 'New',
+    keywords: 'quotation format estimate price quote proforma invoice gst',
+  },
+  {
+    title: 'Delivery Challan Generator',
+    desc: 'GST delivery challan for job work, approval or stock transfer, with vehicle details.',
+    icon: Truck, path: '/delivery-challan-generator', category: 'Business',
+    from: '#ea580c', to: '#fb923c', glow: 'rgba(234,88,12,0.45)', badge: 'New',
+    keywords: 'delivery challan format job work dispatch note gst challan',
   },
   {
     title: 'UPI QR Code Generator',

@@ -433,6 +433,40 @@ export const PAGES: Record<string, PageMeta> = {
     h1: 'GST Invoice Generator',
     intro: 'Create a GST tax invoice with automatic CGST/SGST or IGST split, HSN/SAC codes, amount in words, your logo and bank details, then save it as a PDF. Free, with no sign-up.',
   },
+  '/quotation-generator': {
+    title: 'Quotation Generator Free — GST Quotation Format (India) PDF | HowAutomate',
+    description: 'Create a professional price quotation with GST, HSN codes, validity date, terms, logo and bank details — download as PDF. Free, no sign-up, nothing uploaded.',
+    h1: 'Quotation Generator',
+    intro: 'Send a client a proper quotation in minutes: your logo and GSTIN, item-wise prices with CGST/SGST or IGST worked out, a valid-until date and your terms — saved as a clean PDF.',
+    faqs: [
+      { q: 'What should a quotation include?', a: 'Your business name, address and GSTIN, the customer’s details, a quotation number and date, each item with HSN/SAC code, quantity, rate and GST, the total, how long the prices are valid, and payment and delivery terms.' },
+      { q: 'Is a quotation the same as an invoice?', a: 'No. A quotation is an offer before the sale; it creates no tax liability. Once the customer accepts and you supply, issue a tax invoice — you can make one with the free GST Invoice Generator using the same details.' },
+      { q: 'Is my data uploaded?', a: 'No. Everything you type stays in your browser and the PDF is made on your device.' },
+    ],
+  },
+  '/proforma-invoice-generator': {
+    title: 'Proforma Invoice Generator Free — Format with GST (India) | HowAutomate',
+    description: 'Make a proforma invoice with GST, bank and UPI details to request an advance before supply. Free, prints to PDF, nothing uploaded.',
+    h1: 'Proforma Invoice Generator',
+    intro: 'Need an advance, or a buyer wants the final price on paper before the sale? Create a proforma invoice with GST worked out and your bank and UPI details, clearly marked as not a tax invoice.',
+    faqs: [
+      { q: 'What is a proforma invoice?', a: 'A preliminary bill sent before goods or services are supplied — to confirm the price, request an advance, or support a buyer’s purchase approval or import paperwork. It is not a tax invoice and is not recorded as a sale.' },
+      { q: 'Do I still need a tax invoice later?', a: 'Yes. When you actually supply the goods or services, issue a regular GST tax invoice — the free GST Invoice Generator does that.' },
+      { q: 'Is my data uploaded?', a: 'No. The proforma is created in your browser and saved as a PDF on your device.' },
+    ],
+  },
+  '/delivery-challan-generator': {
+    title: 'Delivery Challan Format Free — GST Challan Generator PDF | HowAutomate',
+    description: 'Create a GST delivery challan for job work, supply on approval, stock transfer or goods sent before the invoice — with HSN, quantities, vehicle number and signature boxes. Free PDF.',
+    h1: 'Delivery Challan Generator',
+    intro: 'Moving goods without a tax invoice — for job work, on approval, as samples, to your own branch, or before the invoice is ready? Make a delivery challan with the consignee, items, HSN codes, quantities, vehicle details and signature boxes, with or without prices.',
+    faqs: [
+      { q: 'When is a delivery challan used instead of a tax invoice?', a: 'Common cases are goods sent for job work, supply on approval or sale-or-return, transfers to your own branch, exhibitions and samples, and goods dispatched when the quantity or final invoice is not yet known. Check with your accountant for your specific case.' },
+      { q: 'What does a delivery challan need to contain?', a: 'Typically: challan number and date, the consignor’s and consignee’s names, addresses and GSTINs, the HSN code, description and quantity of goods, the taxable value and tax where applicable, the place of supply for inter-state movement, and a signature. This generator includes all of these fields.' },
+      { q: 'Do I need an e-way bill as well?', a: 'Possibly — for goods above the e-way bill value threshold, an e-way bill is usually required in addition to the challan. Confirm the current rules for your state and movement type.' },
+      { q: 'Can I hide prices on the challan?', a: 'Yes. Untick "Show prices and tax" to print a challan with items and quantities only — common for job work and approval challans.' },
+    ],
+  },
   '/gst-calculator': {
     title: 'GST Calculator India - Add or Remove GST (CGST, SGST, IGST) - HowAutomate Tools',
     description: 'Free GST calculator: add GST to a price or remove GST from an inclusive amount, with CGST/SGST or IGST split for 5%, 18%, 40% and every other slab. Instant, no signup.',

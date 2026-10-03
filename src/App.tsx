@@ -94,6 +94,9 @@ const App = () => (
             <Route path="/jpg-to-webp" element={<ImageConverter />} />
             <Route path="/split-pdf" element={<SplitPdf />} />
             <Route path="/gst-invoice-generator" element={<GstInvoiceGenerator />} />
+            <Route path="/quotation-generator" element={<GstInvoiceGenerator />} />
+            <Route path="/proforma-invoice-generator" element={<GstInvoiceGenerator />} />
+            <Route path="/delivery-challan-generator" element={<GstInvoiceGenerator />} />
             <Route path="/gst-calculator" element={<GstCalculator />} />
             <Route path="/rent-receipt-generator" element={<RentReceiptGenerator />} />
             <Route path="/salary-slip-generator" element={<SalarySlipGenerator />} />

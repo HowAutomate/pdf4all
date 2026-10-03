@@ -5,6 +5,7 @@
 
 ## Business & GST
 
+- [Quotation Generator](https://tools.howautomate.com/quotation-generator), [Proforma Invoice Generator](https://tools.howautomate.com/proforma-invoice-generator), [Delivery Challan Generator](https://tools.howautomate.com/delivery-challan-generator): same engine as the GST invoice (CGST/SGST/IGST, HSN, logo, bank/UPI); quotation adds a valid-until date; proforma is marked not-a-tax-invoice; challan adds reason for movement (job work, approval, stock transfer…), vehicle no., transport mode, optional value-less mode and receiver/authorised-signatory boxes.
 - [UPI QR Code Generator](https://tools.howautomate.com/upi-qr-code-generator): Standard UPI payment QR (upi://pay) from a UPI ID with optional fixed amount and note; works with Google Pay, PhonePe, Paytm, BHIM; printable A6 "Scan & Pay" card. No tracking, never expires.
 - [GST Invoice Generator](https://tools.howautomate.com/gst-invoice-generator): Create a GST-compliant Indian tax invoice with automatic CGST/SGST vs IGST split, HSN/SAC codes, amount in words, optional bank details, optional round-off, and print/save as PDF.
 - [GST Calculator](https://tools.howautomate.com/gst-calculator): Add GST to a price or remove GST from a GST-inclusive amount, with the CGST/SGST (same state) or IGST (other state) split. Covers 0.25%, 3%, 5%, 12%, 18%, 28%, 40% and custom rates.

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Receipt, Plus, Trash2, Printer, Upload, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import logo from '@/assets/logo-transparent.png';
 import { SEO } from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { amountInWords, inr } from '@/lib/money';
+import { PAGES } from '@/data/pages';
 
 const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
@@ -38,7 +39,57 @@ interface LineItem {
 let nextId = 1;
 const newItem = (): LineItem => ({ id: nextId++, description: '', hsn: '', qty: 1, rate: 0, gstRate: 18 });
 
+/**
+ * One generator, four Indian business documents. They share the line items,
+ * GST maths, logo, bank details and print-to-PDF; only the wording and a few
+ * fields differ.
+ */
+type DocKind = 'invoice' | 'quotation' | 'proforma' | 'challan';
+interface DocConfig {
+  kind: DocKind; heading: string; noLabel: string; noPlaceholder: string; dateLabel: string;
+  filePrefix: string; subtitle: string; defaultNotes: string; footer: string; party: string;
+}
+const DOCS: Record<string, DocConfig> = {
+  '/gst-invoice-generator': {
+    kind: 'invoice', heading: 'TAX INVOICE', noLabel: 'Invoice Number', noPlaceholder: 'INV-001', dateLabel: 'Invoice Date',
+    filePrefix: 'Invoice', party: 'Bill To',
+    subtitle: 'Create a GST-compliant tax invoice in minutes — automatic CGST/SGST or IGST split, HSN codes, amount in words. Everything stays in your browser.',
+    defaultNotes: 'Thank you for your business.',
+    footer: 'This is a computer-generated invoice and does not require a physical signature or stamp.',
+  },
+  '/quotation-generator': {
+    kind: 'quotation', heading: 'QUOTATION', noLabel: 'Quotation Number', noPlaceholder: 'QT-001', dateLabel: 'Quotation Date',
+    filePrefix: 'Quotation', party: 'Quotation For',
+    subtitle: 'Send a professional price quotation with GST worked out, validity date, terms and your logo — then save it as a PDF.',
+    defaultNotes: 'Prices are valid until the date above. Delivery within 7 days of order confirmation. 50% advance with order, balance before dispatch.',
+    footer: 'This is a quotation and not a tax invoice. A tax invoice will be issued on supply.',
+  },
+  '/proforma-invoice-generator': {
+    kind: 'proforma', heading: 'PROFORMA INVOICE', noLabel: 'Proforma Number', noPlaceholder: 'PI-001', dateLabel: 'Date',
+    filePrefix: 'Proforma', party: 'Bill To',
+    subtitle: 'Make a proforma invoice to request an advance or share a final price before supply — GST shown, bank and UPI details included.',
+    defaultNotes: 'Please make the payment to the bank account below. Goods will be dispatched on receipt of payment.',
+    footer: 'This is a proforma invoice and not a tax invoice. A tax invoice will be issued on supply.',
+  },
+  '/delivery-challan-generator': {
+    kind: 'challan', heading: 'DELIVERY CHALLAN', noLabel: 'Challan Number', noPlaceholder: 'DC-001', dateLabel: 'Challan Date',
+    filePrefix: 'Challan', party: 'Consignee (Ship To)',
+    subtitle: 'Create a GST delivery challan for goods sent for job work, on approval, as samples or ahead of the invoice — with vehicle details and signature boxes.',
+    defaultNotes: 'Goods sent as per details above. Please sign and return a copy as acknowledgement of receipt.',
+    footer: 'This delivery challan is not a tax invoice.',
+  },
+};
+
+const CHALLAN_REASONS = [
+  'Supply of goods (invoice to follow)', 'Job work', 'Supply on approval / sale or return', 'Stock transfer to own branch',
+  'Exhibition / display', 'Repair / replacement', 'Samples (free of cost)', 'Other',
+];
+
 const GstInvoiceGenerator = () => {
+  const { pathname } = useLocation();
+  const route = pathname in DOCS ? pathname : '/gst-invoice-generator';
+  const doc = DOCS[route];
+  const page = PAGES[route];
   const [seller, setSeller] = useState({ name: '', address: '', gstin: '', state: '', phone: '', email: '' });
   const [sellerLogo, setSellerLogo] = useState<string | null>(null);
   const [buyer, setBuyer] = useState({ name: '', address: '', gstin: '', state: '' });
@@ -46,12 +97,22 @@ const GstInvoiceGenerator = () => {
     invoiceNumber: '',
     invoiceDate: new Date().toISOString().slice(0, 10),
     placeOfSupply: '',
+    validUntil: new Date(Date.now() + 15 * 86400000).toISOString().slice(0, 10),
+    reason: CHALLAN_REASONS[0],
+    vehicleNo: '',
+    transport: 'Road',
   });
+  // A challan for job work or approval often carries no prices.
+  const [showValues, setShowValues] = useState(true);
+  const values = doc.kind !== 'challan' || showValues;
   const [bank, setBank] = useState({
     accountName: '', bankName: '', accountNumber: '', ifsc: '', branch: '', upi: '',
   });
   const [items, setItems] = useState<LineItem[]>([newItem()]);
-  const [notes, setNotes] = useState('Thank you for your business.');
+  const [notes, setNotes] = useState(doc.defaultNotes);
+  // Switching document type swaps in that document's default terms.
+  const [notesFor, setNotesFor] = useState(route);
+  if (notesFor !== route) { setNotesFor(route); setNotes(doc.defaultNotes); }
   const [roundOff, setRoundOff] = useState(false);
 
   const addItem = () => setItems(prev => [...prev, newItem()]);
@@ -90,9 +151,9 @@ const GstInvoiceGenerator = () => {
     // Browsers stamp document.title into the printed page header, so swap in a
     // neutral invoice name for the duration of the print and restore it after.
     const previousTitle = document.title;
-    const name = [meta.invoiceNumber && `Invoice-${meta.invoiceNumber}`, seller.name]
+    const name = [meta.invoiceNumber && `${doc.filePrefix}-${meta.invoiceNumber}`, seller.name]
       .filter(Boolean).join(' - ');
-    document.title = name || 'Tax Invoice';
+    document.title = name || doc.heading;
     const restore = () => { document.title = previousTitle; };
     window.addEventListener('afterprint', restore, { once: true });
     window.print();
@@ -104,14 +165,14 @@ const GstInvoiceGenerator = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEO
-        title="Free GST Invoice Generator (India) - HowAutomate Tools"
-        description="Create a GST-compliant tax invoice for free — auto CGST/SGST/IGST split, HSN/SAC codes, amount in words, and instant PDF download. Everything runs in your browser, nothing is uploaded."
-        path="/gst-invoice-generator"
+        title={page.title}
+        description={page.description}
+        path={route}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'WebApplication',
-          name: 'GST Invoice Generator',
-          url: 'https://tools.howautomate.com/gst-invoice-generator',
+          name: page.h1,
+          url: `https://tools.howautomate.com${route}`,
           applicationCategory: 'FinanceApplication',
           operatingSystem: 'Any',
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -144,14 +205,21 @@ const GstInvoiceGenerator = () => {
           <div style={{ display: 'inline-flex', padding: 14, borderRadius: 18, background: 'linear-gradient(135deg,#2563eb,#0ea5e9)', boxShadow: '0 8px 28px rgba(37,99,235,0.45)', marginBottom: 20 }}>
             <Receipt style={{ width: 30, height: 30, color: '#fff' }} />
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem,4vw,2.8rem)', fontWeight: 900, color: '#fff', margin: '0 0 14px', letterSpacing: '-0.03em' }}>GST Invoice Generator</h1>
+          <h1 style={{ fontSize: 'clamp(2rem,4vw,2.8rem)', fontWeight: 900, color: '#fff', margin: '0 0 14px', letterSpacing: '-0.03em' }}>{page.h1}</h1>
           <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.48)', lineHeight: 1.7, margin: 0 }}>
-            Create a GST-compliant tax invoice in minutes — automatic CGST/SGST or IGST split, HSN codes, amount in words. Everything stays in your browser.
+            {doc.subtitle}
           </p>
         </div>
       </div>
 
       <main className="container mx-auto px-4 py-10 flex-1">
+        <div className={`${inputCls} flex flex-wrap justify-center gap-2 mb-6`}>
+          {Object.entries(DOCS).map(([to, d]) => (
+            <Link key={to} to={to} className={`rounded-full px-3 py-1 text-xs font-semibold border ${route === to ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:text-foreground'}`}>
+              {PAGES[to].h1.replace(' Generator', '')}
+            </Link>
+          ))}
+        </div>
         <div className={`${inputCls} grid lg:grid-cols-2 gap-4 mb-6`}>
           <Card>
             <CardContent className="pt-5 space-y-3">
@@ -200,7 +268,7 @@ const GstInvoiceGenerator = () => {
 
           <Card>
             <CardContent className="pt-5 space-y-3">
-              <h2 className="font-bold text-sm uppercase tracking-wide text-muted-foreground">Bill To (Buyer)</h2>
+              <h2 className="font-bold text-sm uppercase tracking-wide text-muted-foreground">{doc.kind === 'challan' ? 'Consignee (Receiver)' : doc.kind === 'quotation' ? 'Customer' : 'Bill To (Buyer)'}</h2>
               <div><Label>Customer / Business Name</Label><Input value={buyer.name} onChange={e => setBuyer({ ...buyer, name: e.target.value })} placeholder="Client name" /></div>
               <div><Label>Address</Label><Textarea rows={2} value={buyer.address} onChange={e => setBuyer({ ...buyer, address: e.target.value })} placeholder="Billing address" /></div>
               <div className="grid grid-cols-2 gap-3">
@@ -219,9 +287,29 @@ const GstInvoiceGenerator = () => {
 
         <Card className={`${inputCls} mb-6`}>
           <CardContent className="pt-5 grid sm:grid-cols-3 gap-3">
-            <div><Label>Invoice Number</Label><Input value={meta.invoiceNumber} onChange={e => setMeta({ ...meta, invoiceNumber: e.target.value })} placeholder="INV-001" /></div>
-            <div><Label>Invoice Date</Label><Input type="date" value={meta.invoiceDate} onChange={e => setMeta({ ...meta, invoiceDate: e.target.value })} /></div>
+            <div><Label>{doc.noLabel}</Label><Input value={meta.invoiceNumber} onChange={e => setMeta({ ...meta, invoiceNumber: e.target.value })} placeholder={doc.noPlaceholder} /></div>
+            <div><Label>{doc.dateLabel}</Label><Input type="date" value={meta.invoiceDate} onChange={e => setMeta({ ...meta, invoiceDate: e.target.value })} /></div>
             <div><Label>Place of Supply</Label><Input value={meta.placeOfSupply} onChange={e => setMeta({ ...meta, placeOfSupply: e.target.value })} placeholder="e.g. Rajasthan" /></div>
+            {doc.kind === 'quotation' && (
+              <div><Label>Valid Until</Label><Input type="date" value={meta.validUntil} onChange={e => setMeta({ ...meta, validUntil: e.target.value })} /></div>
+            )}
+            {doc.kind === 'challan' && (
+              <>
+                <div className="sm:col-span-2">
+                  <Label>Reason for Sending</Label>
+                  <Select value={meta.reason} onValueChange={v => setMeta({ ...meta, reason: v })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{CHALLAN_REASONS.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div><Label>Vehicle Number</Label><Input value={meta.vehicleNo} onChange={e => setMeta({ ...meta, vehicleNo: e.target.value.toUpperCase() })} placeholder="RJ14 AB 1234" /></div>
+                <div><Label>Mode of Transport</Label><Input value={meta.transport} onChange={e => setMeta({ ...meta, transport: e.target.value })} placeholder="Road / Courier / Hand delivery" /></div>
+                <div className="sm:col-span-2 flex items-center gap-2 pt-6">
+                  <Checkbox id="show-values" checked={showValues} onCheckedChange={v => setShowValues(v === true)} />
+                  <Label htmlFor="show-values" className="cursor-pointer">Show prices and tax (untick for job work or approval challans without values)</Label>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -256,7 +344,7 @@ const GstInvoiceGenerator = () => {
           </CardContent>
         </Card>
 
-        <Card className={`${inputCls} mb-6`}>
+        <Card className={`${inputCls} mb-6 ${doc.kind === 'challan' ? 'hidden' : ''}`}>
           <CardContent className="pt-5 space-y-3">
             <h2 className="font-bold text-sm uppercase tracking-wide text-muted-foreground">Bank / Payment Details (optional)</h2>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -306,19 +394,28 @@ const GstInvoiceGenerator = () => {
               </div>
             </div>
             <div className="text-right">
-              <h1 className="text-2xl font-extrabold text-gray-800">TAX INVOICE</h1>
+              <h1 className="text-2xl font-extrabold text-gray-800">{doc.heading}</h1>
               <p className="text-sm text-gray-600 mt-1">No: {meta.invoiceNumber || '—'}</p>
               <p className="text-sm text-gray-600">Date: {meta.invoiceDate}</p>
+              {doc.kind === 'quotation' && meta.validUntil && <p className="text-sm text-gray-600">Valid until: {meta.validUntil}</p>}
               {meta.placeOfSupply && <p className="text-sm text-gray-600">Place of Supply: {meta.placeOfSupply}</p>}
             </div>
           </div>
 
           <div className="mb-4">
-            <p className="text-xs font-bold uppercase text-gray-500 mb-1">Bill To</p>
+            <p className="text-xs font-bold uppercase text-gray-500 mb-1">{doc.party}</p>
             <p className="font-semibold">{buyer.name || 'Customer name'}</p>
             <p className="text-sm whitespace-pre-line text-gray-600">{buyer.address}</p>
             {buyer.gstin && <p className="text-sm text-gray-600">GSTIN: {buyer.gstin}</p>}
           </div>
+
+          {doc.kind === 'challan' && (
+            <div className="mb-4 grid grid-cols-3 gap-3 text-sm border border-gray-300 rounded p-2.5">
+              <p><span className="text-gray-500">Reason: </span>{meta.reason}</p>
+              <p><span className="text-gray-500">Transport: </span>{meta.transport || '—'}</p>
+              <p><span className="text-gray-500">Vehicle No: </span>{meta.vehicleNo || '—'}</p>
+            </div>
+          )}
 
           {/* Scrolls sideways on phones; print keeps the full table on the page. */}
           <div className="overflow-x-auto mb-4 print:overflow-visible print:mb-4">
@@ -329,10 +426,12 @@ const GstInvoiceGenerator = () => {
                 <th className="border border-gray-300 px-2 py-1">Description</th>
                 <th className="border border-gray-300 px-2 py-1">HSN/SAC</th>
                 <th className="border border-gray-300 px-2 py-1 text-right">Qty</th>
-                <th className="border border-gray-300 px-2 py-1 text-right">Rate</th>
-                <th className="border border-gray-300 px-2 py-1 text-right">Taxable Value</th>
-                <th className="border border-gray-300 px-2 py-1 text-right">GST</th>
-                <th className="border border-gray-300 px-2 py-1 text-right">Amount</th>
+                {values && <>
+                  <th className="border border-gray-300 px-2 py-1 text-right">Rate</th>
+                  <th className="border border-gray-300 px-2 py-1 text-right">Taxable Value</th>
+                  <th className="border border-gray-300 px-2 py-1 text-right">GST</th>
+                  <th className="border border-gray-300 px-2 py-1 text-right">Amount</th>
+                </>}
               </tr>
             </thead>
             <tbody>
@@ -342,17 +441,19 @@ const GstInvoiceGenerator = () => {
                   <td className="border border-gray-300 px-2 py-1">{r.description || '—'}</td>
                   <td className="border border-gray-300 px-2 py-1">{r.hsn || '—'}</td>
                   <td className="border border-gray-300 px-2 py-1 text-right">{r.qty}</td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.rate)}</td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.taxable)}</td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">{r.gstRate}% (₹{inr(r.gstAmount)})</td>
-                  <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.taxable + r.gstAmount)}</td>
+                  {values && <>
+                    <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.rate)}</td>
+                    <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.taxable)}</td>
+                    <td className="border border-gray-300 px-2 py-1 text-right">{r.gstRate}% (₹{inr(r.gstAmount)})</td>
+                    <td className="border border-gray-300 px-2 py-1 text-right">₹{inr(r.taxable + r.gstAmount)}</td>
+                  </>}
                 </tr>
               ))}
             </tbody>
           </table>
           </div>
 
-          <div className="flex justify-end mb-4">
+          {values && <div className="flex justify-end mb-4">
             <div className="w-64 text-sm">
               <div className="flex justify-between py-1"><span>Subtotal</span><span>₹{inr(computed.subtotal)}</span></div>
               {isIntraState ? (
@@ -368,14 +469,14 @@ const GstInvoiceGenerator = () => {
               )}
               <div className="flex justify-between py-2 border-t-2 border-gray-800 font-bold text-base"><span>Total</span><span>₹{roundOff ? computed.grandTotal.toLocaleString('en-IN') : inr(computed.grandTotal)}</span></div>
             </div>
-          </div>
+          </div>}
 
-          <div className="mb-4">
+          {values && <div className="mb-4">
             <p className="text-xs font-bold uppercase text-gray-500">Amount in Words</p>
             <p className="text-sm">{amountInWords(computed.grandTotal)}</p>
-          </div>
+          </div>}
 
-          {hasBankDetails && (
+          {hasBankDetails && doc.kind !== 'challan' && (
             <div className="mb-4 border border-gray-300 rounded p-3" style={{ breakInside: 'avoid' }}>
               <p className="text-xs font-bold uppercase text-gray-500 mb-1.5">Bank Details for Payment</p>
               <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
@@ -396,8 +497,15 @@ const GstInvoiceGenerator = () => {
             </div>
           )}
 
+          {doc.kind === 'challan' && (
+            <div className="grid grid-cols-2 gap-8 mt-8 mb-4 text-sm" style={{ breakInside: 'avoid' }}>
+              <div><div className="h-12 border-b border-gray-500" /><p className="text-gray-600 mt-1">Received by (name, signature &amp; date)</p></div>
+              <div className="text-right"><div className="h-12 border-b border-gray-500" /><p className="text-gray-600 mt-1">For {seller.name || 'your business'} — Authorised signatory</p></div>
+            </div>
+          )}
+
           <p className="text-xs text-gray-500 text-center border-t border-gray-200 pt-3 leading-relaxed">
-            This is a computer-generated invoice and does not require a physical signature or stamp.
+            {doc.footer}
           </p>
         </div>
       </main>
