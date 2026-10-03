@@ -1,0 +1,7 @@
+modnet-v1.onnx — MODNet: Trimap-Free Portrait Matting (Ke et al.)
+Source: https://github.com/ZHKKKe/MODNet ; ONNX export: https://huggingface.co/Xenova/modnet
+License: Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0
+
+ultraface-320-v1.onnx — Ultra-Light-Fast-Generic-Face-Detector-1MB (version-RFB-320)
+Source: https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB ; ONNX: https://github.com/onnx/models
+License: MIT

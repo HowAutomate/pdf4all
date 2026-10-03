@@ -21,6 +21,8 @@ const EditPdf = lazy(() => import("./pages/EditPdf"));
 const ImageToKb = lazy(() => import("./pages/ImageToKb"));
 const ImagesToPdf = lazy(() => import("./pages/ImagesToPdf"));
 const ImageConverter = lazy(() => import("./pages/ImageConverter"));
+const RemoveBackground = lazy(() => import("./pages/RemoveBackground"));
+const PassportPhoto = lazy(() => import("./pages/PassportPhoto"));
 const PdfToImages = lazy(() => import("./pages/PdfToImages"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
@@ -72,6 +74,8 @@ const App = () => (
             <Route path="/resize-image-to-100kb" element={<ImageToKb />} />
             <Route path="/resize-image-to-200kb" element={<ImageToKb />} />
             <Route path="/signature-resizer" element={<ImageToKb />} />
+            <Route path="/remove-background" element={<RemoveBackground />} />
+            <Route path="/passport-size-photo" element={<PassportPhoto />} />
             <Route path="/compress-image" element={<ImageConverter />} />
             <Route path="/webp-to-jpg" element={<ImageConverter />} />
             <Route path="/png-to-jpg" element={<ImageConverter />} />

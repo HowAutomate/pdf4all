@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -77,6 +77,20 @@ export const TOOLS: Tool[] = [
     icon: FilePenLine, path: '/edit-pdf', category: 'PDF',
     from: '#7c3aed', to: '#2563eb', glow: 'rgba(124,58,237,0.45)', badge: 'New',
     keywords: 'pdf editor edit text change text sign signature fill whiteout annotate modify',
+  },
+  {
+    title: 'Passport Size Photo Maker',
+    desc: 'AI removes the background, frames your face at 35×45 mm and makes a printable 4×6 or A4 sheet.',
+    icon: IdCard, path: '/passport-size-photo', category: 'Image',
+    from: '#2563eb', to: '#60a5fa', glow: 'rgba(37,99,235,0.45)', badge: 'New',
+    keywords: 'passport photo size 35x45 white background print sheet id photo visa 2x2',
+  },
+  {
+    title: 'Remove Background',
+    desc: 'Cut a person out of any photo with AI — transparent PNG or any colour, never uploaded.',
+    icon: Eraser, path: '/remove-background', category: 'Image',
+    from: '#9333ea', to: '#c084fc', glow: 'rgba(147,51,234,0.45)', badge: 'New',
+    keywords: 'remove bg background remover transparent png cut out photo ai',
   },
   {
     title: 'Photo Resizer in KB',

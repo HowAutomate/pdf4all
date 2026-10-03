@@ -213,6 +213,32 @@ export const PAGES: Record<string, PageMeta> = {
     'Convert JPG and PNG images to WebP free — typically 25–35% smaller than JPG at the same quality. Bulk, in your browser.',
     'WebP images load faster on websites and online stores, typically 25–35% smaller than JPG at the same visual quality. Convert a whole folder of product photos at once.',
     [{ q: 'Do all browsers support WebP?', a: 'Yes — every current browser displays WebP. Some older desktop apps and upload portals do not, so keep a JPG copy for those.' }]),
+  '/remove-background': {
+    title: 'Remove Background from Photo Free — AI, No Upload | HowAutomate',
+    description: 'Remove the background from photos of people free with AI that runs in your browser — no upload, no sign-up, full resolution. Transparent PNG or any background colour.',
+    h1: 'Remove Background',
+    intro: 'Cut a person out of any photo in a few seconds — hair included — and download a transparent PNG or put them on white, blue or any colour. The AI runs on your own device, so your photo is never uploaded, and you get the full-resolution result free.',
+    faqs: [
+      { q: 'What kind of photos does it work on?', a: 'It is built for photos of people — portraits, selfies, profile and ID photos, group-free shots. For products and objects without a person, results are not reliable yet.' },
+      { q: 'Why does the first photo take longer?', a: 'The first time, your browser downloads the AI (about 38 MB in total). After that it is cached, so later photos process in a few seconds.' },
+      { q: 'Is my photo uploaded?', a: 'No. Unlike most background removers, the AI runs inside your browser on your device. Nothing is sent to a server, which makes it safe for ID and personal photos.' },
+      { q: 'Is the result full resolution and free?', a: 'Yes — no watermark, no credits and no reduced-size preview. Photos up to 2400 px on the longest side are processed at full size.' },
+      { q: 'Can I make a passport-size photo with it?', a: 'Yes — use the Passport Photo Maker, which removes the background, puts you on white, frames your face to the right size and makes a printable sheet.' },
+    ],
+  },
+  '/passport-size-photo': {
+    title: 'Passport Size Photo Maker Online Free — White Background, Print Sheet | HowAutomate',
+    description: 'Make a passport-size photo (35×45 mm) from any selfie: AI removes the background, frames your face, and gives a single JPG or a printable 4×6 / A4 sheet. Free, in your browser.',
+    h1: 'Passport Size Photo Maker',
+    intro: 'Take a front-facing photo against any background — the AI replaces it with plain white, frames your face to passport proportions, and gives you a single photo (with an optional KB limit for online forms) or a print-ready 4×6 inch or A4 sheet with cutting guides. Everything happens on your device.',
+    faqs: [
+      { q: 'What size is a passport-size photo in India?', a: '35 × 45 mm (3.5 × 4.5 cm) is the standard passport-size photo used on Indian application forms, ID cards and documents. US passports and the Indian visa use 51 × 51 mm (2 × 2 inch) — both are available here.' },
+      { q: 'How should I take the photo?', a: 'Face the camera straight on, with even light and a neutral expression, eyes open, no cap or dark glasses. Hold the phone at eye level about an arm’s length away. The background does not matter — it is replaced.' },
+      { q: 'How many photos fit on a print sheet?', a: 'Eight 35 × 45 mm photos fit on 4 × 6 inch photo paper, and thirty on an A4 sheet. Print at 100% / "actual size" so the photos come out at exactly 35 × 45 mm.' },
+      { q: 'My form wants the photo under 50 KB. Can I do that?', a: 'Yes — type the limit in "Max size (KB)" before downloading. The photo keeps its exact pixel size and only the compression is adjusted.' },
+      { q: 'Is my photo uploaded?', a: 'No. Background removal and face detection run inside your browser. Nothing leaves your device.' },
+    ],
+  },
   '/signature-resizer': {
     title: 'Signature Resizer — Resize Signature to 10–20 KB for Forms | HowAutomate',
     description: 'Resize and clean up a scanned or photographed signature to 10–20 KB JPG for exam and job application forms. Whitens the paper background. Free, no upload.',
