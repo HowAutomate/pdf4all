@@ -27,6 +27,7 @@
 
 ## Photo & Image
 
+- [Crop Image](https://tools.howautomate.com/crop-image): Drag-to-crop with shape presets (free, 1:1, 4:3, 3:4, 16:9, 9:16, Instagram 4:5, passport 35×45), rotate/flip, exact output width, JPG/PNG/WebP. In the browser.
 - [Passport Size Photo Maker](https://tools.howautomate.com/passport-size-photo): AI background removal + face detection frame a selfie as a 35×45 mm (or 2×2 inch / 25×35 mm) photo on white or light blue; single JPG with optional KB limit, or a 300-DPI 4×6 inch (8 photos) / A4 (30 photos) print sheet with cutting guides, as JPG or PDF. Runs in the browser.
 - [Remove Background](https://tools.howautomate.com/remove-background): AI background removal for photos of people (MODNet, runs in the browser, ~38 MB downloaded once and cached); transparent PNG or any colour, full resolution, never uploaded.
 - [Image Compressor](https://tools.howautomate.com/compress-image): Compress JPG, PNG and WebP in bulk (up to 50) with a quality slider; PNGs are palette-quantised (TinyPNG-style) and keep transparency; never returns a bigger file. In the browser.

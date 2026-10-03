@@ -26,6 +26,7 @@ const PassportPhoto = lazy(() => import("./pages/PassportPhoto"));
 const OrganizePdf = lazy(() => import("./pages/OrganizePdf"));
 const PdfStamp = lazy(() => import("./pages/PdfStamp"));
 const QrGenerator = lazy(() => import("./pages/QrGenerator"));
+const CropImage = lazy(() => import("./pages/CropImage"));
 const PdfToImages = lazy(() => import("./pages/PdfToImages"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
@@ -77,6 +78,7 @@ const App = () => (
             <Route path="/resize-image-to-100kb" element={<ImageToKb />} />
             <Route path="/resize-image-to-200kb" element={<ImageToKb />} />
             <Route path="/signature-resizer" element={<ImageToKb />} />
+            <Route path="/crop-image" element={<CropImage />} />
             <Route path="/remove-background" element={<RemoveBackground />} />
             <Route path="/passport-size-photo" element={<PassportPhoto />} />
             <Route path="/organize-pdf" element={<OrganizePdf />} />

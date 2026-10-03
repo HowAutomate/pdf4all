@@ -225,6 +225,18 @@ export const PAGES: Record<string, PageMeta> = {
     'Convert JPG and PNG images to WebP free — typically 25–35% smaller than JPG at the same quality. Bulk, in your browser.',
     'WebP images load faster on websites and online stores, typically 25–35% smaller than JPG at the same visual quality. Convert a whole folder of product photos at once.',
     [{ q: 'Do all browsers support WebP?', a: 'Yes — every current browser displays WebP. Some older desktop apps and upload portals do not, so keep a JPG copy for those.' }]),
+  '/crop-image': {
+    title: 'Crop Image Online Free — Square, 16:9, Instagram, Passport | HowAutomate',
+    description: 'Crop photos online free: drag the crop box, pick a shape (1:1, 4:5, 16:9, 9:16, passport 35×45), rotate or flip, set an exact output size, download JPG, PNG or WebP. No upload.',
+    h1: 'Crop Image',
+    intro: 'Cut a photo to the part you want and the shape you need — a square profile picture, a 4:5 Instagram post, a 16:9 thumbnail or a 9:16 story. Drag the box, rotate or flip if needed, choose the output size and format, and download. Your photo never leaves your device.',
+    faqs: [
+      { q: 'How do I crop to an exact shape?', a: 'Pick a shape such as Square 1:1 or Instagram 4:5 — the crop box locks to it, and dragging a corner keeps the shape. Choose "Free" to crop any shape.' },
+      { q: 'Can I get an exact size in pixels?', a: 'Yes. Type the output width (for example 1080) — the height follows the shape you cropped. With Instagram 4:5 and a width of 1080 you get exactly 1080 × 1350.' },
+      { q: 'My phone photo is sideways. Can I fix it?', a: 'Use Rotate left or right before cropping. Photos are also turned upright automatically using the rotation your phone recorded.' },
+      { q: 'Is my photo uploaded?', a: 'No. Cropping happens in your browser on your device.' },
+    ],
+  },
   '/remove-background': {
     title: 'Remove Background from Photo Free — AI, No Upload | HowAutomate',
     description: 'Remove the background from photos of people free with AI that runs in your browser — no upload, no sign-up, full resolution. Transparent PNG or any background colour.',

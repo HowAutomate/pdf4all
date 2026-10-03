@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck, Crop,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -119,6 +119,13 @@ export const TOOLS: Tool[] = [
     icon: Minimize2, path: '/photo-resizer-in-kb', category: 'Image',
     from: '#16a34a', to: '#22c55e', glow: 'rgba(22,163,74,0.45)', badge: 'New',
     keywords: 'resize image kb 20kb 50kb 100kb compress photo size exam form passport reduce',
+  },
+  {
+    title: 'Crop Image',
+    desc: 'Crop to square, 4:5, 16:9, 9:16 or passport shape; rotate, flip and set an exact size.',
+    icon: Crop, path: '/crop-image', category: 'Image',
+    from: '#db2777', to: '#f472b6', glow: 'rgba(219,39,119,0.45)', badge: 'New',
+    keywords: 'crop photo cut image square instagram profile picture thumbnail rotate flip',
   },
   {
     title: 'Image Compressor',
