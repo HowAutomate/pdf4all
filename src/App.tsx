@@ -23,6 +23,9 @@ const ImagesToPdf = lazy(() => import("./pages/ImagesToPdf"));
 const ImageConverter = lazy(() => import("./pages/ImageConverter"));
 const RemoveBackground = lazy(() => import("./pages/RemoveBackground"));
 const PassportPhoto = lazy(() => import("./pages/PassportPhoto"));
+const OrganizePdf = lazy(() => import("./pages/OrganizePdf"));
+const PdfStamp = lazy(() => import("./pages/PdfStamp"));
+const QrGenerator = lazy(() => import("./pages/QrGenerator"));
 const PdfToImages = lazy(() => import("./pages/PdfToImages"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
@@ -76,6 +79,14 @@ const App = () => (
             <Route path="/signature-resizer" element={<ImageToKb />} />
             <Route path="/remove-background" element={<RemoveBackground />} />
             <Route path="/passport-size-photo" element={<PassportPhoto />} />
+            <Route path="/organize-pdf" element={<OrganizePdf />} />
+            <Route path="/rotate-pdf" element={<OrganizePdf />} />
+            <Route path="/delete-pdf-pages" element={<OrganizePdf />} />
+            <Route path="/add-page-numbers" element={<PdfStamp />} />
+            <Route path="/watermark-pdf" element={<PdfStamp />} />
+            <Route path="/qr-code-generator" element={<QrGenerator />} />
+            <Route path="/upi-qr-code-generator" element={<QrGenerator />} />
+            <Route path="/whatsapp-qr-code-generator" element={<QrGenerator />} />
             <Route path="/compress-image" element={<ImageConverter />} />
             <Route path="/webp-to-jpg" element={<ImageConverter />} />
             <Route path="/png-to-jpg" element={<ImageConverter />} />

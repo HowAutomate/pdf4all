@@ -5,6 +5,7 @@
 
 ## Business & GST
 
+- [UPI QR Code Generator](https://tools.howautomate.com/upi-qr-code-generator): Standard UPI payment QR (upi://pay) from a UPI ID with optional fixed amount and note; works with Google Pay, PhonePe, Paytm, BHIM; printable A6 "Scan & Pay" card. No tracking, never expires.
 - [GST Invoice Generator](https://tools.howautomate.com/gst-invoice-generator): Create a GST-compliant Indian tax invoice with automatic CGST/SGST vs IGST split, HSN/SAC codes, amount in words, optional bank details, optional round-off, and print/save as PDF.
 - [GST Calculator](https://tools.howautomate.com/gst-calculator): Add GST to a price or remove GST from a GST-inclusive amount, with the CGST/SGST (same state) or IGST (other state) split. Covers 0.25%, 3%, 5%, 12%, 18%, 28%, 40% and custom rates.
 - [Rent Receipt Generator](https://tools.howautomate.com/rent-receipt-generator): Generate one rent receipt per month for a period (e.g. a full financial year) for an HRA claim. Warns when annual rent exceeds ₹1,00,000 (landlord PAN needed) and adds a revenue-stamp box for cash payments above ₹5,000. Prints two receipts per A4 page.
@@ -12,6 +13,9 @@
 
 ## PDF Tools
 
+- [Organize PDF](https://tools.howautomate.com/organize-pdf) ([Rotate PDF](https://tools.howautomate.com/rotate-pdf), [Delete PDF pages](https://tools.howautomate.com/delete-pdf-pages)): thumbnails; reorder, rotate (per page or all) and delete pages; in the browser.
+- [Add Page Numbers](https://tools.howautomate.com/add-page-numbers): six positions, formats 1 / Page 1 / 1 / N / Page 1 of N, start number, skip cover; correct on rotated pages.
+- [Watermark PDF](https://tools.howautomate.com/watermark-pdf): text watermark (CONFIDENTIAL, DRAFT…) once or tiled, size/angle/colour/opacity.
 - [JPG to PDF](https://tools.howautomate.com/jpg-to-pdf) / [PNG to PDF](https://tools.howautomate.com/png-to-pdf): Combine photos, scans or screenshots into one PDF in the browser (never uploaded). Reorder pages, A4/Letter/Legal or image-sized pages, margins, phone rotation applied, optional size reduction.
 - [PDF to JPG](https://tools.howautomate.com/pdf-to-jpg) / [PDF to PNG](https://tools.howautomate.com/pdf-to-png): Convert all or selected PDF pages to JPG or PNG at 72/150/300 DPI in the browser; multiple pages download as a ZIP.
 - [Edit PDF](https://tools.howautomate.com/edit-pdf): Free in-browser PDF editor. Click any line of existing text to change it: the old text is deleted from the file and the new text is written in the PDF's own embedded font when that font contains every character typed (otherwise the closest standard font). One line at a time, no paragraph re-flow; a line that can't be isolated safely is covered instead, and the user is told. Also add text, white-out, highlight, draw/type a signature and add images. The PDF is never uploaded.
@@ -37,6 +41,7 @@
 
 ## Everyday Utilities
 
+- [QR Code Generator](https://tools.howautomate.com/qr-code-generator): Static QR codes (no redirect, no expiry, no tracking) for links/text, UPI, [WhatsApp chats](https://tools.howautomate.com/whatsapp-qr-code-generator), Wi-Fi and vCard contacts; custom colours with contrast warning; PNG up to 2048 px or SVG.
 - [Word Counter](https://tools.howautomate.com/word-counter): Count words, characters, sentences and paragraphs, plus estimated reading time.
 
 ## Health

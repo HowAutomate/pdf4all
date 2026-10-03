@@ -63,6 +63,18 @@ const CONVERTER_FAQS: Faq[] = [
   { q: 'Which formats are supported?', a: 'Word (DOC, DOCX, ODT, RTF), Excel (XLS, XLSX, CSV, ODS), PowerPoint (PPT, PPTX, ODP), images (JPG, PNG and more), HTML and text files, among 40+ formats.' },
 ];
 
+const ORGANIZE_FAQS: Faq[] = [
+  { q: 'How do I rearrange pages?', a: 'Use the arrows under each thumbnail to move a page earlier or later. The downloaded PDF follows the order on screen.' },
+  { q: 'Can I undo deleting a page?', a: 'Yes — a removed page stays greyed out in the grid; click its undo button to bring it back before downloading.' },
+  { q: 'Is my PDF uploaded?', a: 'No. Thumbnails and the new PDF are made inside your browser, so it is safe for confidential documents.' },
+];
+
+const QR_FAQS: Faq[] = [
+  { q: 'Do these QR codes expire?', a: 'No. The information is stored in the code itself — there is no redirect through our servers, no tracking and no expiry. It works as long as it is printed clearly.' },
+  { q: 'PNG or SVG?', a: 'PNG works everywhere — WhatsApp, documents, slides. SVG stays perfectly sharp at any size, so use it for printing banners, menus and packaging.' },
+  { q: 'Why won’t my QR code scan?', a: 'Keep it dark on a light background with good contrast, print it at least 2 × 2 cm, and leave a white border around it. Very light or inverted colours confuse many phone cameras.' },
+];
+
 const IMAGE_TOOL_FAQS: Faq[] = [
   { q: 'Are my images uploaded?', a: 'No. Images are compressed and converted inside your browser, on your device — nothing is sent to a server.' },
   { q: 'Can I do many images at once?', a: 'Yes — add up to 50 images. Download them one by one or all together as a ZIP.' },
@@ -270,6 +282,49 @@ export const PAGES: Record<string, PageMeta> = {
     intro: 'Click any line of an existing PDF to change its text — the old words are removed and the new ones written in the PDF’s own font where possible. You can also add text, signatures, images, highlights and white-out, then download. No watermark, no sign-up, and the file never leaves your browser.',
     faqs: EDIT_PDF_FAQS,
   },
+  '/organize-pdf': {
+    title: 'Organize PDF Pages Free — Reorder, Rotate & Delete | HowAutomate',
+    description: 'Rearrange, rotate and delete PDF pages with thumbnails, free in your browser. No upload, no watermark, no sign-up.',
+    h1: 'Organize PDF',
+    intro: 'See every page as a thumbnail, then move pages around, turn sideways scans upright and remove the pages you don’t need — all in one go, then download the tidied-up PDF. Your file never leaves your device.',
+    faqs: ORGANIZE_FAQS,
+  },
+  '/rotate-pdf': {
+    title: 'Rotate PDF Free — Turn Pages Permanently | HowAutomate',
+    description: 'Rotate all pages or individual pages of a PDF and save the result permanently. Free, in your browser, no upload.',
+    h1: 'Rotate PDF',
+    intro: 'Fix sideways or upside-down scans: rotate every page at once or just the ones that need it, and save the PDF so it opens the right way up everywhere.',
+    faqs: [{ q: 'Is the rotation permanent?', a: 'Yes. The saved PDF opens with the new orientation in every viewer, on phone and computer, and prints that way too.' }, ...ORGANIZE_FAQS],
+  },
+  '/delete-pdf-pages': {
+    title: 'Delete Pages from PDF Free — Remove Pages Online | HowAutomate',
+    description: 'Remove unwanted pages from a PDF by clicking them, then download the shorter file. Free, in your browser, no upload.',
+    h1: 'Delete PDF Pages',
+    intro: 'Remove blank pages, duplicates or anything you don’t want to share before sending a document. Click the bin on a page to remove it (and again to bring it back), then download.',
+    faqs: ORGANIZE_FAQS,
+  },
+  '/add-page-numbers': {
+    title: 'Add Page Numbers to PDF Free — Position & Format | HowAutomate',
+    description: 'Add page numbers to a PDF: choose the position, format (1, Page 1, Page 1 of 10), start number and skip the cover page. Free, no upload.',
+    h1: 'Add Page Numbers to PDF',
+    intro: 'Number the pages of a report, thesis, tender or file for submission. Pick where the numbers go and how they look, start from any number, and leave the cover page unnumbered if you like.',
+    faqs: [
+      { q: 'Can I skip the cover page?', a: 'Yes — tick "Don’t number the first page" and numbering starts on page 2 with your chosen start number.' },
+      { q: 'What if some pages are landscape or rotated?', a: 'Numbers are placed where you chose as each page is displayed, so a landscape page gets its number in the correct corner, the right way up.' },
+      { q: 'Is my PDF uploaded?', a: 'No. Numbers are added inside your browser.' },
+    ],
+  },
+  '/watermark-pdf': {
+    title: 'Watermark PDF Free — Add CONFIDENTIAL, DRAFT or Any Text | HowAutomate',
+    description: 'Add a text watermark to every page of a PDF — CONFIDENTIAL, DRAFT, COPY or your own words. Choose size, angle, colour and transparency. Free, no upload.',
+    h1: 'Watermark PDF',
+    intro: 'Stamp every page with CONFIDENTIAL, DRAFT, COPY, your company name or any short text — once in the middle or repeated across the page, at the angle and transparency you choose.',
+    faqs: [
+      { q: 'Can a watermark be removed?', a: 'A text watermark makes copying and misuse obvious, but determined people can remove it with PDF editing software. For sensitive documents, combine it with sharing only what is necessary.' },
+      { q: 'Can I use Hindi or other scripts?', a: 'For now the watermark supports English letters, numbers and common symbols.' },
+      { q: 'Is my PDF uploaded?', a: 'No. The watermark is added inside your browser.' },
+    ],
+  },
   '/merge-pdf': {
     title: 'Merge PDF — Combine PDF Files Online Free | HowAutomate',
     description: 'Combine multiple PDF files into one, free and in your browser. Reorder pages before merging, no upload, no signup, no watermark.',
@@ -398,6 +453,39 @@ export const PAGES: Record<string, PageMeta> = {
     h1: 'Salary Slip Generator',
     intro: 'A standard Indian payslip with editable earnings and deductions, one-click EPF, paid and loss-of-pay days, and net pay in words — printed to PDF in one click.',
     faqs: SALARY_SLIP_FAQS,
+  },
+
+  /* ── QR codes ───────────────────────────────────────────────────── */
+  '/qr-code-generator': {
+    title: 'QR Code Generator Free — Links, UPI, WhatsApp, Wi-Fi | HowAutomate',
+    description: 'Create free QR codes that never expire — for links, UPI payments, WhatsApp chats, Wi-Fi passwords and contact cards. Custom colours, PNG and SVG download, no sign-up.',
+    h1: 'QR Code Generator',
+    intro: 'Make a QR code for a website, a UPI payment, a WhatsApp chat, your Wi-Fi or a contact card. Codes are free forever, never expire, and contain no tracking — download as PNG or print-quality SVG.',
+    faqs: QR_FAQS,
+  },
+  '/upi-qr-code-generator': {
+    title: 'UPI QR Code Generator Free — Payment QR for Shops | HowAutomate',
+    description: 'Create a UPI payment QR code from your UPI ID — works with Google Pay, PhonePe, Paytm and BHIM. Optional fixed amount, printable "Scan & Pay" card. Free.',
+    h1: 'UPI QR Code Generator',
+    intro: 'Turn your UPI ID into a payment QR code customers can scan with any UPI app. Leave the amount blank for a counter QR, or fix an amount for a specific bill — then download it or print a ready-made “Scan & Pay” card.',
+    faqs: [
+      { q: 'Which apps can pay with this QR code?', a: 'Any UPI app — Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, bank apps — because it uses the standard UPI payment link format.' },
+      { q: 'Is it safe? Does the money go through you?', a: 'The QR code only contains your UPI ID, name and optional amount. Payments go straight from the customer’s UPI app to your bank account; nothing passes through us, and nothing is stored.' },
+      { q: 'Where do I find my UPI ID?', a: 'Open your UPI app and look at your profile or "Receive money" screen — it looks like 9876543210@ybl or yourname@okhdfcbank.' },
+      { q: 'Is this the same as a merchant QR from my bank?', a: 'It works the same way for receiving payments. Merchant QR codes from banks or payment companies may add things like sound-box alerts and settlement reports; for a small shop or freelancer, this QR is enough to get paid.' },
+      ...QR_FAQS,
+    ],
+  },
+  '/whatsapp-qr-code-generator': {
+    title: 'WhatsApp QR Code Generator Free — Chat Link with Message | HowAutomate',
+    description: 'Create a QR code that opens a WhatsApp chat with your number and a pre-filled message. Great for shops, menus and visiting cards. Free.',
+    h1: 'WhatsApp QR Code Generator',
+    intro: 'Let customers message you on WhatsApp without saving your number: they scan, and a chat opens with your number and an optional ready-to-send message. Print it on your counter, menu, packaging or visiting card.',
+    faqs: [
+      { q: 'Does the customer need to save my number?', a: 'No. Scanning opens a WhatsApp chat with you straight away, with your pre-filled message ready to send.' },
+      { q: 'Does it work with WhatsApp Business?', a: 'Yes — it works with any WhatsApp or WhatsApp Business number.' },
+      ...QR_FAQS,
+    ],
   },
 
   /* ── Developer / utilities ──────────────────────────────────────── */

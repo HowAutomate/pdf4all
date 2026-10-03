@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -49,6 +49,13 @@ export const TOOLS: Tool[] = [
     icon: Receipt, path: '/gst-invoice-generator', category: 'Business',
     from: '#2563eb', to: '#0ea5e9', glow: 'rgba(37,99,235,0.45)', badge: 'Popular',
     keywords: 'tax bill billing gstin hsn sac invoice india',
+  },
+  {
+    title: 'UPI QR Code Generator',
+    desc: 'Turn your UPI ID into a payment QR for any UPI app, with a printable Scan & Pay card.',
+    icon: IndianRupee, path: '/upi-qr-code-generator', category: 'Business',
+    from: '#16a34a', to: '#4ade80', glow: 'rgba(22,163,74,0.45)', badge: 'New',
+    keywords: 'upi qr payment google pay phonepe paytm bhim shop scan and pay',
   },
   {
     title: 'GST Calculator',
@@ -135,6 +142,27 @@ export const TOOLS: Tool[] = [
     keywords: 'pdf to image pdf to png convert pdf pages jpeg',
   },
   {
+    title: 'Organize PDF',
+    desc: 'Reorder, rotate and delete pages with thumbnails, then download the tidied PDF.',
+    icon: LayoutGrid, path: '/organize-pdf', category: 'PDF',
+    from: '#7c3aed', to: '#a78bfa', glow: 'rgba(124,58,237,0.45)', badge: 'New',
+    keywords: 'rotate pdf delete pages reorder rearrange remove pages sort',
+  },
+  {
+    title: 'Add Page Numbers',
+    desc: 'Number PDF pages in any corner and format, skipping the cover if you want.',
+    icon: Hash, path: '/add-page-numbers', category: 'PDF',
+    from: '#0891b2', to: '#22d3ee', glow: 'rgba(8,145,178,0.45)', badge: 'New',
+    keywords: 'page numbers pdf numbering paginate footer',
+  },
+  {
+    title: 'Watermark PDF',
+    desc: 'Stamp CONFIDENTIAL, DRAFT or your own text on every page.',
+    icon: Stamp, path: '/watermark-pdf', category: 'PDF',
+    from: '#dc2626', to: '#f87171', glow: 'rgba(220,38,38,0.45)', badge: 'New',
+    keywords: 'watermark stamp confidential draft text pdf',
+  },
+  {
     title: 'Merge PDF',
     desc: 'Combine several PDFs into one file and reorder them before you download.',
     icon: Combine, path: '/merge-pdf', category: 'PDF',
@@ -189,6 +217,13 @@ export const TOOLS: Tool[] = [
     icon: Sparkles, path: '/ugc-content', category: 'Marketing',
     from: '#059669', to: '#0891b2', glow: 'rgba(5,150,105,0.45)',
     keywords: 'social ads creative content instagram',
+  },
+  {
+    title: 'QR Code Generator',
+    desc: 'Free QR codes for links, WhatsApp, Wi-Fi and contact cards — no expiry, PNG or SVG.',
+    icon: QrCode, path: '/qr-code-generator', category: 'Utilities',
+    from: '#16a34a', to: '#22c55e', glow: 'rgba(22,163,74,0.45)', badge: 'New',
+    keywords: 'qr code generator link url whatsapp wifi vcard free',
   },
   {
     title: 'Word Counter',
