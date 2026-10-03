@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -91,6 +91,20 @@ export const TOOLS: Tool[] = [
     icon: PenLine, path: '/signature-resizer', category: 'Image',
     from: '#0d9488', to: '#2dd4bf', glow: 'rgba(13,148,136,0.45)', badge: 'New',
     keywords: 'signature resize kb exam form ssc upsc ibps sign photo',
+  },
+  {
+    title: 'JPG to PDF',
+    desc: 'Combine photos and scans into one PDF — reorder pages, pick A4 or Letter. Never uploaded.',
+    icon: Images, path: '/jpg-to-pdf', category: 'PDF',
+    from: '#e11d48', to: '#fb7185', glow: 'rgba(225,29,72,0.45)', badge: 'New',
+    keywords: 'image to pdf photo to pdf png to pdf combine images jpeg',
+  },
+  {
+    title: 'PDF to JPG',
+    desc: 'Turn PDF pages into JPG or PNG images at screen or print quality, as a ZIP.',
+    icon: FileImage, path: '/pdf-to-jpg', category: 'PDF',
+    from: '#ea580c', to: '#fb923c', glow: 'rgba(234,88,12,0.45)', badge: 'New',
+    keywords: 'pdf to image pdf to png convert pdf pages jpeg',
   },
   {
     title: 'Merge PDF',

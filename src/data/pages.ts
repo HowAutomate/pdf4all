@@ -59,6 +59,20 @@ const CONVERTER_FAQS: Faq[] = [
   { q: 'Which formats are supported?', a: 'Word (DOC, DOCX, ODT, RTF), Excel (XLS, XLSX, CSV, ODS), PowerPoint (PPT, PPTX, ODP), images (JPG, PNG and more), HTML and text files, among 40+ formats.' },
 ];
 
+const IMAGES_TO_PDF_FAQS: Faq[] = [
+  { q: 'How do I combine several photos into one PDF?', a: 'Add all the images at once (or in batches), use the arrows to put them in order, and press Convert. Each image becomes one page.' },
+  { q: 'My phone photo came out sideways. Will that happen here?', a: 'No. The rotation your phone records in the photo is applied before the page is made, so pages come out the right way up.' },
+  { q: 'Can I make the PDF smaller for an upload portal?', a: 'Tick "Make the PDF smaller" — photos are resized and compressed. If you need an exact limit such as 200 KB, run the result through Compress PDF to 200 KB.' },
+  { q: 'Are my images uploaded?', a: 'No. The PDF is built inside your browser, so photos of IDs, certificates and receipts never leave your device.' },
+];
+
+const PDF_TO_IMAGES_FAQS: Faq[] = [
+  { q: 'Which quality should I choose?', a: '150 DPI suits screens, WhatsApp and most portals. Choose 300 DPI for printing or when you need to zoom into small text; files will be about four times larger.' },
+  { q: 'JPG or PNG?', a: 'JPG gives much smaller files and is best for scanned pages and photos. PNG is lossless — best for pages with fine text, diagrams or charts.' },
+  { q: 'Can I convert only some pages?', a: 'Yes. Choose "Choose pages" and type pages or ranges such as 1-3, 7. Pages are numbered from 1.' },
+  { q: 'Is my PDF uploaded?', a: 'No. Pages are rendered to images inside your browser, on your device.' },
+];
+
 const PDF_COMPRESS_FAQS: Faq[] = [
   {
     q: 'Why is my PDF so large?',
@@ -255,11 +269,32 @@ export const PAGES: Record<string, PageMeta> = {
     faqs: CONVERTER_FAQS,
   },
   '/jpg-to-pdf': {
-    title: 'JPG to PDF Converter Free — Images to PDF | HowAutomate',
-    description: 'Convert JPG, PNG and other images to PDF free. Combine several photos into one PDF. No sign-up, no watermark.',
-    h1: 'JPG to PDF Converter',
-    intro: 'Turn photos and scans (JPG, PNG and more) into a PDF — handy for submitting documents, receipts and certificates. Add several images to convert them together.',
-    faqs: CONVERTER_FAQS,
+    title: 'JPG to PDF Converter Free — Combine Photos into One PDF | HowAutomate',
+    description: 'Convert JPG photos and scans to PDF free. Combine many images into one PDF, reorder pages, choose A4 or Letter. Runs in your browser — never uploaded.',
+    h1: 'JPG to PDF',
+    intro: 'Turn photos of documents, receipts and certificates into a single PDF. Add as many images as you need, put them in order, pick the page size and margins, and download — your photos never leave your device.',
+    faqs: IMAGES_TO_PDF_FAQS,
+  },
+  '/png-to-pdf': {
+    title: 'PNG to PDF Converter Free — Screenshots & Images to PDF | HowAutomate',
+    description: 'Convert PNG screenshots and images to PDF free, lossless. Combine several into one PDF in your browser — nothing uploaded.',
+    h1: 'PNG to PDF',
+    intro: 'Turn screenshots, diagrams and other PNG images into a PDF without losing sharpness. Combine several into one document, reorder them and choose the page size.',
+    faqs: IMAGES_TO_PDF_FAQS,
+  },
+  '/pdf-to-jpg': {
+    title: 'PDF to JPG Converter Free — Convert PDF Pages to Images | HowAutomate',
+    description: 'Convert every page of a PDF to a JPG image free, at screen or print quality. All pages or selected ones, downloaded as a ZIP. No upload.',
+    h1: 'PDF to JPG',
+    intro: 'Turn PDF pages into JPG images — for WhatsApp, social media, presentations or portals that only accept images. Choose the quality and the pages; multiple pages download together as a ZIP.',
+    faqs: PDF_TO_IMAGES_FAQS,
+  },
+  '/pdf-to-png': {
+    title: 'PDF to PNG Converter Free — High Quality Images | HowAutomate',
+    description: 'Convert PDF pages to sharp PNG images free, up to 300 DPI. Select pages, download as ZIP. Runs in your browser — nothing uploaded.',
+    h1: 'PDF to PNG',
+    intro: 'Convert PDF pages to lossless PNG images — best for diagrams, text and anything you want to stay perfectly sharp. Pick the pages and quality; multiple pages come as a ZIP.',
+    faqs: PDF_TO_IMAGES_FAQS,
   },
 
   /* ── Business & GST ─────────────────────────────────────────────── */

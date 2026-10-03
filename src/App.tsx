@@ -19,6 +19,8 @@ const PdfCompressor = lazy(() => import("./pages/PdfCompressor"));
 const MergePdf = lazy(() => import("./pages/MergePdf"));
 const EditPdf = lazy(() => import("./pages/EditPdf"));
 const ImageToKb = lazy(() => import("./pages/ImageToKb"));
+const ImagesToPdf = lazy(() => import("./pages/ImagesToPdf"));
+const PdfToImages = lazy(() => import("./pages/PdfToImages"));
 const SplitPdf = lazy(() => import("./pages/SplitPdf"));
 const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
 const GstCalculator = lazy(() => import("./pages/GstCalculator"));
@@ -45,7 +47,10 @@ const App = () => (
             <Route path="/word-to-pdf" element={<Index />} />
             <Route path="/excel-to-pdf" element={<Index />} />
             <Route path="/ppt-to-pdf" element={<Index />} />
-            <Route path="/jpg-to-pdf" element={<Index />} />
+            <Route path="/jpg-to-pdf" element={<ImagesToPdf />} />
+            <Route path="/png-to-pdf" element={<ImagesToPdf />} />
+            <Route path="/pdf-to-jpg" element={<PdfToImages />} />
+            <Route path="/pdf-to-png" element={<PdfToImages />} />
             <Route path="/bmi-calculator" element={<BmiCalculator />} />
             <Route path="/datetime-converter" element={<DateTimeConverter />} />
             <Route path="/ugc-content" element={<UgcContent />} />
