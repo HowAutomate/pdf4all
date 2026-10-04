@@ -19,6 +19,24 @@ export interface KbPreset {
   mode: 'photo' | 'signature';
 }
 
+/** One document an exam form asks for, with the official limits. */
+export interface ExamDoc {
+  label: string;
+  maxKb: number;
+  minKb?: number;
+  /** Exact pixel size, when the notification gives one. */
+  w?: number; h?: number;
+  mode: 'photo' | 'signature';
+  /** Short how-to shown with the tab. */
+  tip: string;
+}
+
+export interface ExamPreset {
+  /** Where the numbers come from — shown on the page. */
+  source: string;
+  docs: ExamDoc[];
+}
+
 export type ImageToolPreset = { mode: 'compress' } | { mode: 'convert'; to: 'jpg' | 'png' | 'webp' };
 
 export interface PageMeta {
@@ -32,6 +50,8 @@ export interface PageMeta {
   noindex?: boolean;
   /** Settings for the KB resizer pages. */
   kb?: KbPreset;
+  /** Exam-specific pages: one tab per document the form asks for. */
+  exam?: ExamPreset;
   /** PDF compressor pages: open in "exact size" mode with this target. */
   pdfTargetKb?: number;
   /** Image compressor / converter pages. */
@@ -261,6 +281,85 @@ export const PAGES: Record<string, PageMeta> = {
       { q: 'How many photos fit on a print sheet?', a: 'Eight 35 × 45 mm photos fit on 4 × 6 inch photo paper, and thirty on an A4 sheet. Print at 100% / "actual size" so the photos come out at exactly 35 × 45 mm.' },
       { q: 'My form wants the photo under 50 KB. Can I do that?', a: 'Yes — type the limit in "Max size (KB)" before downloading. The photo keeps its exact pixel size and only the compression is adjusted.' },
       { q: 'Is my photo uploaded?', a: 'No. Background removal and face detection run inside your browser. Nothing leaves your device.' },
+    ],
+  },
+  /* ── Exam-specific (every number taken from the official notice) ── */
+  '/ibps-photo-signature-size': {
+    title: 'IBPS Photo, Signature, Thumb & Declaration Size Resizer 2026 | HowAutomate',
+    description: 'Resize your photo (200×230, 20–50 KB), signature (140×60, 10–20 KB), left thumb impression (240×240, 20–50 KB) and handwritten declaration (800×400, 50–100 KB) to the official IBPS specs. Free, no upload.',
+    h1: 'IBPS Photo & Signature Resizer',
+    intro: 'Get all four IBPS uploads right first time — photograph, signature, left thumb impression and handwritten declaration — each set to the exact pixel size and KB range in the official IBPS notification. Pick the document, add your image, download. Nothing is uploaded.',
+    exam: {
+      source: 'IBPS CRP PO/MT-XVI detailed notification, Annexure III (Guidelines for Scanning and Upload of Documents). Check your own notification — IBPS uses the same format across recent recruitments, but always confirm.',
+      docs: [
+        { label: 'Photograph', maxKb: 50, minKb: 20, w: 200, h: 230, mode: 'photo', tip: 'Recent colour passport-style photo on a light (preferably white) background, face clearly visible, no cap or dark glasses.' },
+        { label: 'Signature', maxKb: 20, minKb: 10, w: 140, h: 60, mode: 'signature', tip: 'Sign on white paper with a black ink pen, in running handwriting — signatures in CAPITAL letters are not accepted.' },
+        { label: 'Left thumb impression', maxKb: 50, minKb: 20, w: 240, h: 240, mode: 'signature', tip: 'Left thumb impression on white paper with black or blue ink (3 × 3 cm). If you don’t have a left thumb, follow the notification’s alternative-finger rules.' },
+        { label: 'Handwritten declaration', maxKb: 100, minKb: 50, w: 800, h: 400, mode: 'signature', tip: 'Write in English, in your own handwriting, black ink on white paper, NOT in capital letters: “I, (Name of the candidate), hereby declare that all the information submitted by me in the application form is correct, true and valid. I will present the supporting documents as and when required.”' },
+      ],
+    },
+    faqs: [
+      { q: 'What is the IBPS photo size?', a: '200 × 230 pixels (preferred), JPG, between 20 KB and 50 KB, as per the official notification. You will also have to capture a live photograph with your webcam or phone during registration — that is separate from this upload.' },
+      { q: 'What is the IBPS signature size?', a: '140 × 60 pixels (preferred), between 10 KB and 20 KB. Sign on white paper with a black pen, in running handwriting — not in capital letters.' },
+      { q: 'What size is the left thumb impression and the handwritten declaration?', a: 'Thumb impression: 240 × 240 pixels at 200 DPI (3 × 3 cm), 20–50 KB. Handwritten declaration: 800 × 400 pixels at 200 DPI (10 × 5 cm), 50–100 KB, written in English in your own handwriting.' },
+      { q: 'Does the same work for IBPS Clerk, RRB and SBI?', a: 'IBPS uses the same format across its recent recruitments, and SBI uses a similar one — but always check the exact numbers in your own notification before uploading.' },
+      ...KB_COMMON.slice(0, 1),
+    ],
+  },
+  '/neet-photo-size': {
+    title: 'NEET UG 2026 Photo, Signature & Thumb Impression Size Resizer | HowAutomate',
+    description: 'Resize your NEET UG photo (10–200 KB, white background), signature (10–100 KB) and finger & thumb impressions (10–200 KB) to the official NTA limits. Free, no upload.',
+    h1: 'NEET UG Photo & Signature Resizer',
+    intro: 'Make your NEET UG uploads fit NTA’s limits: the passport-size photograph, your signature and the finger and thumb impressions — each within the official KB range from the NEET (UG) 2026 information bulletin.',
+    exam: {
+      source: 'NTA NEET (UG) 2026 Information Bulletin. The photograph must be recent (taken after 1 January 2026); NTA also captures a live photo during the application. Check the bulletin for your year before uploading.',
+      docs: [
+        { label: 'Passport photo', maxKb: 200, minKb: 10, mode: 'photo', tip: 'Recent colour or black-and-white photo, white background, 80% of the image should be your face (without mask), ears visible.' },
+        { label: 'Signature', maxKb: 100, minKb: 10, mode: 'signature', tip: 'Sign clearly on white paper; crop close to the signature.' },
+        { label: 'Finger & thumb impressions', maxKb: 200, minKb: 10, mode: 'signature', tip: 'Left and right hand finger and thumb impressions on white paper, as laid out in the bulletin — make sure every impression is clear.' },
+      ],
+    },
+    faqs: [
+      { q: 'What is the NEET UG photo size in KB?', a: 'Between 10 KB and 200 KB, JPG/JPEG, with 80% of the image being your face (no mask, ears visible) on a white background — as per the NEET (UG) 2026 bulletin.' },
+      { q: 'What is the NEET signature size?', a: 'JPG/JPEG between 10 KB and 100 KB.' },
+      { q: 'What about the finger and thumb impressions and certificates?', a: 'Finger and thumb impressions: JPG/JPEG, 10–200 KB. Certificates such as the Class X certificate are PDFs of 50–300 KB — use Compress PDF to 200 KB if yours is too large.' },
+      ...KB_COMMON.slice(0, 1),
+    ],
+  },
+  '/jee-main-photo-size': {
+    title: 'JEE Main 2026 Photo & Signature Size Resizer (10–200 KB) | HowAutomate',
+    description: 'Resize your JEE Main photograph (10–200 KB, 80% face, white background) and signature (10–100 KB) to the official NTA limits. Free, in your browser.',
+    h1: 'JEE Main Photo & Signature Resizer',
+    intro: 'Fit your JEE Main photograph and signature to NTA’s official limits in one step. Besides the live photo NTA captures during the application, you still upload a scanned passport-size photo and signature — this gets both right.',
+    exam: {
+      source: 'NTA JEE (Main) 2026 Information Bulletin. Check the bulletin for your session before uploading.',
+      docs: [
+        { label: 'Photograph', maxKb: 200, minKb: 10, mode: 'photo', tip: 'Recent colour passport-size photo, 80% face (without mask) visible including ears, white background.' },
+        { label: 'Signature', maxKb: 100, minKb: 10, mode: 'signature', tip: 'Clear signature on white paper; crop close to it.' },
+      ],
+    },
+    faqs: [
+      { q: 'What is the JEE Main photo size?', a: 'JPG/JPEG between 10 KB and 200 KB, colour, 80% face (without mask) visible including ears, white background — as per the JEE (Main) 2026 bulletin.' },
+      { q: 'What is the JEE Main signature size?', a: 'JPG/JPEG between 10 KB and 100 KB.' },
+      { q: 'Is the live photo the same as this upload?', a: 'No. NTA captures a live photograph through your webcam or phone during the application, and separately asks you to upload a scanned photograph and signature.' },
+      ...KB_COMMON.slice(0, 1),
+    ],
+  },
+  '/ssc-signature-size': {
+    title: 'SSC Signature Size Resizer 2026 — 10–20 KB, 6 × 2 cm | HowAutomate',
+    description: 'Resize your signature to SSC’s official 10–20 KB JPG (about 6 × 2 cm) for CGL, CHSL, MTS, GD and other SSC forms. Cleans up the paper background. Free.',
+    h1: 'SSC Signature Resizer',
+    intro: 'SSC now captures your photograph live inside the application, so the one image you must prepare is your signature: JPG, 10–20 KB, about 6 cm wide by 2 cm high. Photograph your signature on white paper and this makes it fit.',
+    exam: {
+      source: 'SSC official application notices (2026). Blurred or miniature signatures are rejected — check your exam’s notice before uploading.',
+      docs: [
+        { label: 'Signature', maxKb: 20, minKb: 10, w: 240, h: 80, mode: 'signature', tip: 'Sign on white paper with a dark pen. Output is 240 × 80 px — a 6 × 2 cm shape.' },
+      ],
+    },
+    faqs: [
+      { q: 'What is the SSC signature size?', a: 'JPEG/JPG between 10 KB and 20 KB, with the image about 6.0 cm wide and 2.0 cm high, as per SSC’s official notices.' },
+      { q: 'Does SSC need a photo upload?', a: 'No — the SSC application captures your photograph live during form filling, so you do not upload an existing photo. Remove caps, masks and glasses for the capture.' },
+      ...KB_COMMON.slice(0, 1),
     ],
   },
   '/signature-resizer': {

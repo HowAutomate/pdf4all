@@ -6,6 +6,7 @@ import { ToolLayout } from '@/components/ToolLayout';
 import { Button } from '@/components/ui/button';
 import { PAGES, type KbPreset } from '@/data/pages';
 import { fitToKb } from '@/lib/fitToKb';
+import { padJpeg } from '@/lib/jpegPad';
 
 const ACCENT = { from: '#16a34a', to: '#86efac', soft: 'rgba(22,163,74,0.18)' };
 const KB = 1024;
@@ -13,6 +14,7 @@ const KB = 1024;
 const MAX_START_SIDE = 2400;
 
 const SIZE_LINKS: [string, string][] = [
+  ['/ibps-photo-signature-size', 'IBPS'], ['/neet-photo-size', 'NEET'], ['/jee-main-photo-size', 'JEE Main'], ['/ssc-signature-size', 'SSC'],
   ['/resize-image-to-10kb', '10 KB'], ['/resize-image-to-20kb', '20 KB'], ['/resize-image-to-50kb', '50 KB'],
   ['/resize-image-to-100kb', '100 KB'], ['/resize-image-to-200kb', '200 KB'], ['/signature-resizer', 'Signature'],
   ['/photo-resizer-in-kb', 'Any size'],
@@ -72,7 +74,10 @@ export default function ImageToKb() {
   const { pathname } = useLocation();
   const meta = PAGES[pathname] ?? PAGES['/photo-resizer-in-kb'];
   const preset: KbPreset = meta.kb ?? { maxKb: 50, mode: 'photo' };
-  const isSignature = preset.mode === 'signature';
+  const exam = meta.exam;
+  const [docIdx, setDocIdx] = useState(0);
+  const doc = exam?.docs[docIdx] ?? null;
+  const isSignature = doc ? doc.mode === 'signature' : preset.mode === 'signature';
 
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState<HTMLImageElement | null>(null);
@@ -90,9 +95,23 @@ export default function ImageToKb() {
 
   // A new page (e.g. 20 KB → 50 KB) resets the preset.
   useEffect(() => {
+    if (exam) return;
     setMaxKb(preset.maxKb);
     setMinKb(preset.minKb ?? '');
-  }, [preset.maxKb, preset.minKb]);
+  }, [preset.maxKb, preset.minKb, exam]);
+
+  // Exam pages: a new page starts on its first document.
+  useEffect(() => { setDocIdx(0); }, [pathname]);
+
+  // Exam pages: each document applies its official limits. A different
+  // document needs a different image, so the current one is cleared.
+  useEffect(() => {
+    if (!doc) return;
+    setMaxKb(doc.maxKb);
+    setMinKb(doc.minKb ?? '');
+    if (doc.w && doc.h) { setSizeMode('exact'); setExactW(doc.w); setExactH(doc.h); } else setSizeMode('keep');
+    setFile(null); setSource(null); setResult(null);
+  }, [doc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pick = async (f: File | undefined) => {
     if (!f) return;
@@ -155,19 +174,25 @@ export default function ImageToKb() {
       const min = typeof minKb === 'number' && minKb > 0 && minKb < maxKb ? minKb * KB : 0;
       // Exact pixel sizes must not change, so the search may only adjust quality.
       const fit = await fitToKb(async (s, q) => (await render(s, q)).size, maxKb * KB, exact ? 0 : min, 1);
-      const blob = await render(fit.scale, fit.quality);
+      let blob = await render(fit.scale, fit.quality);
       if (id !== runId.current) return;
       let note: string | undefined;
       if (!fit.ok) note = `Couldn’t get under ${maxKb} KB at a usable quality — try a smaller pixel size.`;
-      else if (min && blob.size < min) note = exact
-        ? `At exactly ${tw} × ${th} pixels the best quality is only ${(blob.size / KB).toFixed(1)} KB — under your ${minKb} KB minimum. Check the pixel size in your notification; a larger one will produce a bigger file.`
-        : `Your image is too simple to reach ${minKb} KB.`;
+      else if (min && blob.size < min) {
+        // Too small for the form's minimum even at full quality (common with
+        // small exact sizes like 140 × 60). Pad the JPEG with a comment block:
+        // the picture is untouched, only the file size grows.
+        const target = Math.min(maxKb * KB - 256, min + 512);
+        const padded = padJpeg(new Uint8Array(await blob.arrayBuffer()), target);
+        note = `Your image was only ${(blob.size / KB).toFixed(1)} KB, below the ${minKb} KB minimum, so the file was padded to ${(padded.length / KB).toFixed(1)} KB. The picture itself is unchanged — portals only check the file size.`;
+        blob = new Blob([padded], { type: 'image/jpeg' });
+      }
       setResult(prev => {
         if (prev) URL.revokeObjectURL(prev.url);
         return {
           url: URL.createObjectURL(blob), bytes: blob.size,
           width: Math.round(tw * fit.scale), height: Math.round(th * fit.scale),
-          quality: fit.quality, ok: fit.ok && !(min && blob.size < min), note,
+          quality: fit.quality, ok: fit.ok, note,
         };
       });
     } catch (e) {
@@ -210,6 +235,23 @@ export default function ImageToKb() {
       faqs={meta.faqs}
       maxWidth={860}
     >
+      {exam && doc && (
+        <div className="mb-5 rounded-2xl border border-green-500/30 bg-green-500/[0.06] p-4">
+          <span className="block text-[11px] font-bold uppercase tracking-wider text-white/45 mb-2">Which document?</span>
+          <div className="flex flex-wrap gap-2">
+            {exam.docs.map((d, i) => (
+              <button key={d.label} onClick={() => setDocIdx(i)}
+                className={`rounded-lg px-3 py-2 text-sm font-semibold border text-left ${docIdx === i ? 'border-green-500 bg-green-500/15 text-white' : 'border-white/10 text-white/60 hover:text-white'}`}>
+                {d.label}
+                <span className="block text-[11px] font-normal opacity-70">{d.minKb ? `${d.minKb}–` : 'up to '}{d.maxKb} KB{d.w && d.h ? ` · ${d.w} × ${d.h} px` : ''}</span>
+              </button>
+            ))}
+          </div>
+          <p className="text-sm text-white/75 mt-3">{doc.tip}</p>
+          <p className="text-[11px] text-white/40 mt-2">Source: {exam.source}</p>
+        </div>
+      )}
+
       <div className="flex flex-wrap justify-center gap-2 mb-6">
         {SIZE_LINKS.map(([to, label]) => (
           <Link key={to} to={to}
@@ -228,7 +270,7 @@ export default function ImageToKb() {
         style={{ borderColor: dragOver ? ACCENT.from : 'rgba(255,255,255,0.15)', background: dragOver ? ACCENT.soft : 'rgba(255,255,255,0.03)' }}
       >
         <Upload className="w-8 h-8 mx-auto" style={{ color: ACCENT.to }} />
-        <p className="text-white font-semibold mt-3">{file ? file.name : `Choose ${isSignature ? 'a signature photo' : 'a photo'} or drop it here`}</p>
+        <p className="text-white font-semibold mt-3">{file ? file.name : `Choose ${doc ? `your ${doc.label.toLowerCase()} image` : isSignature ? 'a signature photo' : 'a photo'} or drop it here`}</p>
         <p className="text-xs mt-1 text-white/45">JPG, PNG or WebP · resized on your device, never uploaded</p>
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={e => { pick(e.target.files?.[0]); e.target.value = ''; }} />
       </div>

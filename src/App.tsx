@@ -78,6 +78,10 @@ const App = () => (
             <Route path="/resize-image-to-100kb" element={<ImageToKb />} />
             <Route path="/resize-image-to-200kb" element={<ImageToKb />} />
             <Route path="/signature-resizer" element={<ImageToKb />} />
+            <Route path="/ibps-photo-signature-size" element={<ImageToKb />} />
+            <Route path="/neet-photo-size" element={<ImageToKb />} />
+            <Route path="/jee-main-photo-size" element={<ImageToKb />} />
+            <Route path="/ssc-signature-size" element={<ImageToKb />} />
             <Route path="/crop-image" element={<CropImage />} />
             <Route path="/remove-background" element={<RemoveBackground />} />
             <Route path="/passport-size-photo" element={<PassportPhoto />} />

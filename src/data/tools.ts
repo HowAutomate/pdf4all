@@ -1,7 +1,7 @@
 import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
-  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck, Crop,
+  Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck, Crop, GraduationCap,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -140,6 +140,13 @@ export const TOOLS: Tool[] = [
     icon: Repeat, path: '/webp-to-jpg', category: 'Image',
     from: '#0891b2', to: '#22d3ee', glow: 'rgba(8,145,178,0.45)', badge: 'New',
     keywords: 'webp to jpg png to jpg jpg to png convert image format jpeg webp',
+  },
+  {
+    title: 'Exam Photo & Signature',
+    desc: 'Official sizes for IBPS, NEET, JEE Main and SSC uploads — photo, signature, thumb, declaration.',
+    icon: GraduationCap, path: '/ibps-photo-signature-size', category: 'Image',
+    from: '#ca8a04', to: '#facc15', glow: 'rgba(202,138,4,0.45)', badge: 'New',
+    keywords: 'ibps neet jee ssc exam photo size signature size thumb impression declaration bank exam',
   },
   {
     title: 'Signature Resizer',
