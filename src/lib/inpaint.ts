@@ -8,6 +8,7 @@ import { contextWindow, dilate, maskRegions } from './inpaintRegions';
  */
 let worker: Worker | null = null;
 let ready: Promise<void> | null = null;
+let failReady: ((e: Error) => void) | null = null;
 const progressListeners = new Set<(p: number) => void>();
 const pending = new Map<number, { resolve: (d: Uint8Array) => void; reject: (e: Error) => void }>();
 let nextId = 1;
@@ -26,6 +27,7 @@ function getWorker(): Worker {
     worker.onerror = e => {
       const err = new Error(e.message || 'The AI stopped unexpectedly');
       pending.forEach(p => p.reject(err)); pending.clear();
+      failReady?.(err);
       worker?.terminate(); worker = null; ready = null;
     };
   }
@@ -38,6 +40,7 @@ export function loadInpaintModel(onProgress?: (fraction: number) => void): Promi
   if (!ready) {
     const w = getWorker();
     ready = new Promise<void>((resolve, reject) => {
+      failReady = reject;
       const on = (e: MessageEvent) => {
         if (e.data.type === 'ready') { w.removeEventListener('message', on); resolve(); }
         else if (e.data.type === 'error' && e.data.id === undefined) { w.removeEventListener('message', on); reject(new Error(e.data.message)); }
