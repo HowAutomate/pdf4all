@@ -31,7 +31,7 @@ export const TERMS: TermsSection[] = [
       '• make false claims for tax, HRA, GST input credit, loans, reimbursements, visas, admissions, employment or any other benefit;',
       '• edit, sign, stamp or watermark a document you are not authorised to change, or imitate another person\'s signature;',
       '• process content you do not own or have permission to use, or infringe anyone\'s copyright, trademark, privacy or other rights;',
-      '• create QR codes, payment (UPI) codes or links that mislead people, impersonate others or lead to fraud, phishing or malware;',
+      '• create QR codes of any kind (website links, payments, contact cards, Wi-Fi, messages or anything else) that mislead people, impersonate others or lead to fraud, phishing or malware;',
       '• do anything that breaks any law in India or in the place where you are.',
       'Any document you create with these tools is yours. You alone are responsible for its accuracy, its legality and how it is used. Misuse may be a criminal offence, including under the Bharatiya Nyaya Sanhita, 2023, the Information Technology Act, 2000 and tax laws, and we will co-operate with lawful requests from authorities.',
     ],
