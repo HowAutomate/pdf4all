@@ -5,3 +5,7 @@ License: Apache License 2.0 — https://www.apache.org/licenses/LICENSE-2.0
 ultraface-320-v1.onnx — Ultra-Light-Fast-Generic-Face-Detector-1MB (version-RFB-320)
 Source: https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB ; ONNX: https://github.com/onnx/models
 License: MIT
+
+migan-pipeline-v2.onnx — MI-GAN: A Simple Baseline for Image Inpainting on Mobile Devices (Picsart AI Research)
+Source: https://github.com/Picsart-AI-Research/MI-GAN ; ONNX: https://huggingface.co/andraniksargsyan/migan
+License: MIT

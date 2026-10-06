@@ -2,8 +2,7 @@ import {
   FileText, HeartPulse, Clock, Sparkles, Lock, BookOpen, Code2, Receipt,
   Combine, Scissors, Briefcase, Wrench, Megaphone, Terminal, Activity,
   Home, Wallet, Calculator, FilePenLine, Minimize2, PenLine, Images, FileImage, ImageDown, Repeat, Eraser, IdCard, LayoutGrid, Hash, Stamp, QrCode, IndianRupee, FileSignature, Truck, Crop, GraduationCap,
-  type LucideIcon,
-} from 'lucide-react';
+  type LucideIcon, Droplets } from 'lucide-react';
 
 export type CategoryId = 'Business' | 'PDF' | 'Image' | 'Developer' | 'Marketing' | 'Utilities' | 'Health';
 
@@ -114,6 +113,13 @@ export const TOOLS: Tool[] = [
     keywords: 'remove bg background remover transparent png cut out photo ai',
   },
   {
+    title: 'Watermark Remover',
+    desc: 'Paint over a watermark, logo or text and AI fills it in. Works on photos and PDFs, never uploaded.',
+    icon: Droplets, path: '/watermark-remover', category: 'Image',
+    from: '#0891b2', to: '#67e8f9', glow: 'rgba(8,145,178,0.45)', badge: 'New',
+    keywords: 'remove watermark eraser logo text object remover inpaint cleanup photo',
+  },
+  {
     title: 'Photo Resizer in KB',
     desc: 'Resize a photo to an exact KB size (10, 20, 50, 100 KB…) and pixel size for exam and job forms.',
     icon: Minimize2, path: '/photo-resizer-in-kb', category: 'Image',
@@ -189,6 +195,13 @@ export const TOOLS: Tool[] = [
     icon: Stamp, path: '/watermark-pdf', category: 'PDF',
     from: '#dc2626', to: '#f87171', glow: 'rgba(220,38,38,0.45)', badge: 'New',
     keywords: 'watermark stamp confidential draft text pdf',
+  },
+  {
+    title: 'Remove Watermark from PDF',
+    desc: 'Remove CONFIDENTIAL, DRAFT or logo watermarks; the text stays sharp.',
+    icon: Droplets, path: '/remove-watermark-from-pdf', category: 'PDF',
+    from: '#0891b2', to: '#67e8f9', glow: 'rgba(8,145,178,0.45)', badge: 'New',
+    keywords: 'remove watermark pdf delete draft confidential sample logo',
   },
   {
     title: 'Merge PDF',
