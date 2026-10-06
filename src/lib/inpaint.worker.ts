@@ -52,7 +52,9 @@ self.onmessage = async (e: MessageEvent<Msg>) => {
   try {
     if (m.type === 'load') {
       await load();
-      self.postMessage({ type: 'ready' });
+      // `threads` is informational (and gives this file a new hash, so browsers
+      // that cached a copy served before the isolation headers fetch it again).
+      self.postMessage({ type: 'ready', threads: ort.env.wasm.numThreads });
     } else {
       const sess = await load();
       const out = await sess.run({
