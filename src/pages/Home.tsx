@@ -329,7 +329,7 @@ const Home = () => {
               })}
               <div style={{ minWidth: 140 }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 14px' }}>Company</p>
-                {[['HowAutomate.com', 'https://howautomate.com'], ['Blog', 'https://howautomate.com/blog']].map(([lbl, href]) => (
+                {[['HowAutomate.com', 'https://howautomate.com'], ['Blog', 'https://howautomate.com/blog'], ['Terms of use', '/terms']].map(([lbl, href]) => (
                   <div key={href} style={{ marginBottom: 9 }}>
                     <a href={href} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.42)', textDecoration: 'none', transition: 'color 0.15s' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#fff')}
@@ -343,6 +343,10 @@ const Home = () => {
           </div>
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 24, textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.18)' }}>
             &copy; {new Date().getFullYear()} HowAutomate &middot; All tools are free and privacy-first
+            <div style={{ marginTop: 8 }}>
+              For genuine, lawful use only. HowAutomate is not responsible for misuse of these tools or the documents made with them.{' '}
+              <Link to="/terms" style={{ color: '#a78bfa', textDecoration: 'none' }}>Read the terms</Link>
+            </div>
           </div>
         </div>
       </footer>

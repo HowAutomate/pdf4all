@@ -10,6 +10,7 @@ import {
   EDIT_PDF_FAQS, GST_CALCULATOR_FAQS, RENT_RECEIPT_FAQS, SALARY_SLIP_FAQS, MERGE_PDF_FAQS, SPLIT_PDF_FAQS,
   type Faq,
 } from './faqs';
+import { TERMS_SUMMARY } from './terms';
 
 export interface KbPreset {
   /** Largest file size allowed, in KB. */
@@ -56,6 +57,8 @@ export interface PageMeta {
   pdfTargetKb?: number;
   /** Image compressor / converter pages. */
   image?: ImageToolPreset;
+  /** A legal/info page rather than a tool (different schema and body). */
+  legal?: boolean;
 }
 
 const KB_COMMON: Faq[] = [
@@ -670,6 +673,13 @@ export const PAGES: Record<string, PageMeta> = {
     h1: 'UGC Content Creator',
     intro: 'Build social media and ad creatives for marketing campaigns.',
     noindex: true,
+  },
+  '/terms': {
+    title: 'Terms of Use & Disclaimer — HowAutomate Tools',
+    description: 'Terms of use for the free tools on tools.howautomate.com: genuine and lawful use only, no warranty, and no liability for misuse.',
+    h1: 'Terms of Use & Disclaimer',
+    intro: TERMS_SUMMARY,
+    legal: true,
   },
 };
 

@@ -33,6 +33,7 @@ const GstInvoiceGenerator = lazy(() => import("./pages/GstInvoiceGenerator"));
 const GstCalculator = lazy(() => import("./pages/GstCalculator"));
 const RentReceiptGenerator = lazy(() => import("./pages/RentReceiptGenerator"));
 const SalarySlipGenerator = lazy(() => import("./pages/SalarySlipGenerator"));
+const Terms = lazy(() => import("./pages/Terms"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -106,6 +107,7 @@ const App = () => (
             <Route path="/gst-calculator" element={<GstCalculator />} />
             <Route path="/rent-receipt-generator" element={<RentReceiptGenerator />} />
             <Route path="/salary-slip-generator" element={<SalarySlipGenerator />} />
+            <Route path="/terms" element={<Terms />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -113,6 +113,10 @@ export const ToolLayout = ({
         Free tools by{' '}
         <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" style={{ color: accent.to, textDecoration: 'none' }}>HowAutomate</a>
         &nbsp;&middot;&nbsp; Your files never leave your browser
+        <div style={{ marginTop: 8, color: 'rgba(255,255,255,0.28)' }}>
+          For genuine, lawful use only. You are responsible for the documents you create.{' '}
+          <Link to="/terms" style={{ color: accent.to, textDecoration: 'none' }}>Terms of use</Link>
+        </div>
       </footer>
     </div>
   );

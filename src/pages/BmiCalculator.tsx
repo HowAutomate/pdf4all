@@ -190,6 +190,10 @@ const BmiCalculator = () => {
           <a href="https://howautomate.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
             HowAutomate
           </a>
+          <div className="mt-2 text-xs">
+            For genuine, lawful use only. You are responsible for the documents you create.{' '}
+            <a href="/terms" className="underline">Terms of use</a>
+          </div>
         </div>
       </footer>
     </div>

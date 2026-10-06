@@ -149,6 +149,9 @@ const Index = () => {
       <footer className="border-t border-border mt-auto py-6">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
           Convert documents, images, and more to PDF instantly
+          <div className="mt-2 text-xs">
+            For genuine, lawful use only. <a href="/terms" className="underline">Terms of use</a>
+          </div>
         </div>
       </footer>
     </div>

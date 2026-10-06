@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Plugin } from 'vite';
 import { PAGES, SITE_URL, type PageMeta } from '../src/data/pages';
+import { TERMS, TERMS_CONTACT, TERMS_EFFECTIVE_DATE } from '../src/data/terms';
 
 /**
  * After `vite build`, writes one real HTML file per page in src/data/pages.ts
@@ -32,6 +33,8 @@ function structuredData(route: string, meta: PageMeta) {
   const out: Record<string, unknown>[] = [];
   if (route === '/') {
     out.push({ '@context': 'https://schema.org', '@type': 'WebSite', name: 'HowAutomate Tools', url });
+  } else if (meta.legal) {
+    out.push({ '@context': 'https://schema.org', '@type': 'WebPage', name: meta.h1, url, description: meta.description });
   } else {
     out.push({
       '@context': 'https://schema.org', '@type': 'WebApplication', name: meta.h1, url,
@@ -56,7 +59,7 @@ function structuredData(route: string, meta: PageMeta) {
 }
 
 function body(route: string, meta: PageMeta) {
-  const others = Object.entries(PAGES).filter(([r, m]) => r !== route && r !== '/' && !m.noindex);
+  const others = Object.entries(PAGES).filter(([r, m]) => r !== route && r !== '/' && !m.noindex && !m.legal);
   const faq = meta.faqs?.length
     ? `<section><h2>Frequently asked questions</h2>${meta.faqs.map(f => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join('')}</section>`
     : '';
@@ -64,8 +67,16 @@ function body(route: string, meta: PageMeta) {
   return `<main style="max-width:760px;margin:0 auto;padding:48px 20px;font-family:Inter,system-ui,sans-serif;color:#e5e7eb;background:#07040f;line-height:1.7">`
     + `<p><a href="/" style="color:#a78bfa">HowAutomate Tools</a></p>`
     + `<h1 style="font-size:2rem;color:#fff">${esc(meta.h1)}</h1><p>${esc(meta.intro)}</p>${faq}`
+    + (route === '/terms' ? termsHtml() : '')
     + `<nav><h2>More free tools</h2><ul>${others.map(([r, m]) => `<li><a href="${r}" style="color:#a78bfa">${esc(m.h1)}</a></li>`).join('')}</ul></nav>`
+    + `<p style="font-size:13px"><a href="/terms" style="color:#a78bfa">Terms of use</a>: for genuine, lawful use only.</p>`
     + `</main>`;
+}
+
+function termsHtml() {
+  return `<p>Last updated: ${esc(TERMS_EFFECTIVE_DATE)}</p>`
+    + TERMS.map(s => `<section><h2>${esc(s.h)}</h2>${s.p.map(p => `<p>${esc(p)}</p>`).join('')}</section>`).join('')
+    + `<p>Contact: <a href="mailto:${TERMS_CONTACT}" style="color:#a78bfa">${TERMS_CONTACT}</a></p>`;
 }
 
 export function renderPage(template: string, route: string, meta: PageMeta) {

@@ -36,4 +36,14 @@ describe('static page generator', () => {
     expect(xml).toContain('<loc>https://tools.howautomate.com/resize-image-to-20kb</loc>');
     expect((xml.match(/<loc>/g) ?? []).length).toBe(Object.values(PAGES).filter(p => !p.noindex).length);
   });
+
+  it('pre-renders the full terms page and links it from every page', () => {
+    const html = renderPage(template, '/terms', PAGES['/terms']);
+    expect(html).toContain('"@type":"WebPage"');
+    expect(html).not.toContain('"@type":"WebApplication"');
+    expect(html).toContain('Genuine and lawful use only');
+    expect(html).toContain('Limitation of liability');
+    expect(renderPage(template, '/merge-pdf', PAGES['/merge-pdf'])).toContain('href="/terms"');
+    expect(renderPage(template, '/merge-pdf', PAGES['/merge-pdf'])).not.toContain('<li><a href="/terms"'); // not listed as a tool
+  });
 });
